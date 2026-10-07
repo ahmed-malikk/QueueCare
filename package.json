@@ -10,9 +10,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "next build && playwright test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:security": "node --experimental-websocket scripts/check-security.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "next": "^16.4.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
@@ -25,5 +27,8 @@
     "typescript": "^5.9.3",
     "vite": "^6.4.4",
     "vitest": "^3.2.7"
+  },
+  "engines": {
+    "node": ">=20.12"
   }
 }
