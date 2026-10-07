@@ -23,6 +23,10 @@ Many clinics still run on paper tokens. Patients don't know how long they'll wai
 - **Priority queue:** the most urgent patient is always called next. Patients with the same urgency are seen in order of arrival, and waiting time gradually raises priority so nobody waits indefinitely.
 - **Real-time updates:** the database pushes every change to all open screens, so the doctor, receptionist and waiting room always show the same queue.
 
+## Research
+
+Requirements are based on interviews with a clinic receptionist and three patients in Lahore: [interview findings](docs/research/interview-findings.md).
+
 ## Tech stack
 
 Next.js · TypeScript · Supabase (Postgres, Auth, Realtime) · Vitest · Playwright · GitHub Actions · Vercel
