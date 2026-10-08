@@ -18,3 +18,14 @@ test("ST-00.1 the browser tab icon is the QueueCare logo", async ({ request }) =
   expect(icon.ok()).toBe(true);
   expect(icon.headers()["content-type"]).toContain("svg");
 });
+
+test("ST-00.2 the header offers a way home from the sign-in page", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Staff", exact: true }).click();
+  await expect(page).toHaveURL(/\/login$/);
+
+  await expect(page.getByRole("link", { name: "Staff", exact: true })).toHaveCount(0);
+  await page.getByRole("link", { name: "Home", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("link", { name: "Staff", exact: true })).toBeVisible();
+});
