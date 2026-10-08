@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { Inter } from "next/font/google";
+import { UserRound } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
@@ -20,7 +23,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className="flex flex-col">
-        <SiteHeader />
+        <SiteHeader
+          actions={
+            // Signed-out staff get the sign-in page; signed-in staff are sent on to their own screen.
+            <Button asChild variant="outline">
+              <Link href="/login">
+                <UserRound /> Staff area
+              </Link>
+            </Button>
+          }
+        />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4">{children}</main>
         <SiteFooter />
         <Toaster position="top-center" richColors />
