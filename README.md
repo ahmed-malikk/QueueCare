@@ -34,7 +34,7 @@ Many clinics still run on paper tokens. Patients don't know how long they'll wai
 
 ## Tech stack
 
-Next.js · TypeScript · Supabase (Postgres, Auth, Realtime) · Vitest · Playwright · GitHub Actions · Vercel
+Next.js · TypeScript · Tailwind CSS · shadcn/ui (Radix) · Lucide icons · Supabase (Postgres, Auth, Realtime) · Vitest · Playwright · GitHub Actions · Vercel
 
 ## Author
 
