@@ -4,6 +4,7 @@
 // Test rows are named "Security check" and marked done straight away, so they never wait in the queue.
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
+import { orderQueue } from "../src/lib/priorityQueue.ts"; // Node 22 runs TypeScript by stripping the types
 
 const env = Object.fromEntries(
   readFileSync(new URL("../.env.local", import.meta.url), "utf8")
@@ -82,6 +83,60 @@ let testToken;
 {
   const { data, error } = await anon.rpc("visit_status", { p_code: "0".repeat(32) });
   check("A wrong code shows nothing", !error && data === null, error?.message);
+}
+
+// ── Waiting-room display (003): public, token numbers only ──
+{
+  const { data, error } = await anon.rpc("waiting_room");
+  const text = JSON.stringify(data ?? {});
+  check(
+    "Public can read the waiting-room display, with no names or urgency",
+    !error && Array.isArray(data?.next) && !text.includes("Security check") && !text.includes("urgency"),
+    error?.message,
+  );
+
+  // The database orders the queue itself (so urgency never leaves it). Prove it agrees with
+  // the app's rules: add a mix of patients, order today's waiting visits with orderQueue(),
+  // and compare the next three. The mix is finished straight afterwards.
+  const inAnHour = new Date(Date.now() + 60 * 60_000).toISOString();
+  const { data: mix } = await reception
+    .from("visits")
+    .insert([
+      { ...testVisit, urgency: 0 },
+      { ...testVisit, urgency: 2 },
+      { ...testVisit, kind: "booked", booked_at: inAnHour, urgency: 1 },
+      { ...testVisit, urgency: 1 },
+    ])
+    .select("id");
+  const { data: ordered } = await anon.rpc("waiting_room");
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Karachi" }).format(new Date());
+  const { data: rows } = await reception
+    .from("visits")
+    .select("id, token_number, urgency, kind, arrived_at, booked_at")
+    .eq("visit_date", today)
+    .eq("status", "waiting");
+  const expected = orderQueue(
+    (rows ?? []).map((row) => ({
+      id: row.id,
+      tokenNumber: row.token_number,
+      urgency: row.urgency,
+      kind: row.kind,
+      arrivedAt: new Date(row.arrived_at),
+      bookedAt: row.booked_at ? new Date(row.booked_at) : null,
+    })),
+    new Date(),
+  )
+    .slice(0, 3)
+    .map((visit) => visit.tokenNumber);
+  check(
+    "The display's next three match the app's queue rules",
+    (mix?.length ?? 0) === 4 && JSON.stringify(ordered?.next) === JSON.stringify(expected),
+    `database ${JSON.stringify(ordered?.next)}, app ${JSON.stringify(expected)}, ${rows?.length ?? 0} waiting`,
+  );
+  await reception
+    .from("visits")
+    .update({ status: "done", done_at: new Date().toISOString() })
+    .in("id", (mix ?? []).map((visit) => visit.id));
 }
 
 // ── Doctor ──

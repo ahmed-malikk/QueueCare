@@ -11,7 +11,7 @@
     "test:watch": "vitest",
     "test:e2e": "next build && playwright test",
     "typecheck": "tsc --noEmit",
-    "check:security": "node scripts/check-security.mjs"
+    "check:security": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-security.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

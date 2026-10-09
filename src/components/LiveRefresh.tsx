@@ -18,7 +18,7 @@ const SAFETY_REFRESH_MS = 30_000;
  * Safety net: a message can be lost (a slow network, a brief disconnect), so the page also
  * refreshes when the connection comes back and every 30 seconds.
  */
-export function LiveRefresh() {
+export function LiveRefresh({ tone = "light" }: { tone?: "light" | "dark" }) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("connecting");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -59,7 +59,11 @@ export function LiveRefresh() {
       data-state={status}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium",
-        status === "live" ? "border-success/30 text-success" : "text-muted-foreground",
+        tone === "dark"
+          ? "border-white/25 text-white/80"
+          : status === "live"
+            ? "border-success/30 text-success"
+            : "text-muted-foreground",
       )}
     >
       <span
