@@ -11,7 +11,7 @@
     "test:watch": "vitest",
     "test:e2e": "next build && playwright test",
     "typecheck": "tsc --noEmit",
-    "check:security": "node --experimental-websocket scripts/check-security.mjs"
+    "check:security": "node scripts/check-security.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -41,6 +41,6 @@
     "vitest": "^3.2.7"
   },
   "engines": {
-    "node": ">=20.12"
+    "node": ">=22"
   }
 }
