@@ -182,7 +182,15 @@ export function RegisterForm() {
         </CardContent>
       </Card>
 
-      {state.issued && <TokenCard issued={state.issued} />}
+      {state.issued ? (
+        <TokenCard issued={state.issued} />
+      ) : (
+        // Keeps the layout steady on wide screens until the first token is issued.
+        <div className="hidden h-full min-h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed text-center text-muted-foreground lg:flex">
+          <Ticket className="size-8" aria-hidden="true" />
+          <p className="text-sm">The token and its QR code will appear here.</p>
+        </div>
+      )}
 
       {/* Always on the page, so screen readers announce each new token (a live region
           that appears together with its text is not announced). */}

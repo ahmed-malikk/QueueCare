@@ -1,5 +1,6 @@
 "use server";
 
+import { refresh } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/dal";
 import { estimateForNewPatient } from "@/lib/queueData";
@@ -68,6 +69,7 @@ export async function registerPatient(previous: RegisterState, formData: FormDat
     .select("token_number, public_code")
     .single();
   if (error || !data) return failed("The patient couldn't be saved. Check the connection and try again.");
+  refresh(); // re-render the page so the new patient appears in today's queue
 
   return {
     attempt,
@@ -81,4 +83,29 @@ export async function registerPatient(previous: RegisterState, formData: FormDat
       estimate,
     },
   };
+}
+
+export type UrgencyChangeResult = { ok: true } | { ok: false; message: string };
+
+/**
+ * Runs when the receptionist taps Normal, Urgent or Emergency on a patient in the queue.
+ * Only waiting patients can change; the queue re-orders when the page re-renders.
+ */
+export async function changeUrgency(visitId: string, urgency: number): Promise<UrgencyChangeResult> {
+  const user = await getCurrentUser();
+  if (user?.role !== "receptionist") return { ok: false, message: "Only reception can change urgency." };
+  if (urgency !== 0 && urgency !== 1 && urgency !== 2) return { ok: false, message: "Choose an urgency level." };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("visits")
+    .update({ urgency })
+    .eq("id", visitId)
+    .eq("status", "waiting") // a patient already called keeps their record as it was
+    .select("id");
+  if (error) return { ok: false, message: "The change couldn't be saved. Check the connection and try again." };
+  if (!data || data.length === 0) return { ok: false, message: "That patient is no longer waiting." };
+
+  refresh();
+  return { ok: true };
 }

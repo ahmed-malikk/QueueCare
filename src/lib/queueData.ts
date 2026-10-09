@@ -6,6 +6,7 @@ import { clinicDay } from "@/lib/clinicTime";
 
 type VisitRow = {
   id: string;
+  patient_name: string;
   token_number: number;
   urgency: number;
   kind: "walk_in" | "booked";
@@ -13,10 +14,14 @@ type VisitRow = {
   booked_at: string | null;
 };
 
+/** A waiting visit as staff see it: the priority-queue fields plus the patient's name. */
+export type StaffVisit = QueueVisit & { patientName: string };
+
 /** A database row in the shape the priority queue works with. */
-export function toQueueVisit(row: VisitRow): QueueVisit {
+export function toStaffVisit(row: VisitRow): StaffVisit {
   return {
     id: row.id,
+    patientName: row.patient_name,
     tokenNumber: row.token_number,
     urgency: row.urgency as Urgency,
     kind: row.kind,
@@ -26,14 +31,14 @@ export function toQueueVisit(row: VisitRow): QueueVisit {
 }
 
 /** Everyone still waiting today. Row-level security means only staff get rows back. */
-export async function getWaitingToday(supabase: SupabaseClient, now: Date): Promise<QueueVisit[]> {
+export async function getWaitingToday(supabase: SupabaseClient, now: Date): Promise<StaffVisit[]> {
   const { data, error } = await supabase
     .from("visits")
-    .select("id, token_number, urgency, kind, arrived_at, booked_at")
+    .select("id, patient_name, token_number, urgency, kind, arrived_at, booked_at")
     .eq("visit_date", clinicDay(now))
     .eq("status", "waiting");
   if (error) throw error;
-  return (data ?? []).map(toQueueVisit);
+  return (data ?? []).map(toStaffVisit);
 }
 
 /** How long today's most recent consultations took, oldest first (for the wait estimate). */
