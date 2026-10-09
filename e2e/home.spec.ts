@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { RECEPTION, signIn } from "./helpers";
 
 test("ST-00 home page loads, shows the logo and fits the screen", async ({ page }) => {
   await page.goto("/");
@@ -28,4 +29,11 @@ test("ST-00.2 the header offers a way home from the sign-in page", async ({ page
   await page.getByRole("link", { name: "Home", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByRole("link", { name: "Staff", exact: true })).toBeVisible();
+});
+
+test("ST-00.3 staff screens show a Home button in the header", async ({ page }) => {
+  await signIn(page, RECEPTION);
+  await expect(page).toHaveURL(/\/reception$/);
+  await expect(page.getByRole("link", { name: "Home", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Staff", exact: true })).toHaveCount(0);
 });
