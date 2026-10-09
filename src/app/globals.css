@@ -90,12 +90,6 @@
   }
   html {
     @apply font-sans antialiased;
-    accent-color: var(--primary);
-    caret-color: var(--primary);
-  }
-  ::selection {
-    background: var(--slip);
-    color: var(--foreground);
   }
   body {
     @apply min-h-dvh bg-background text-foreground;
