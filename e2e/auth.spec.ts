@@ -1,17 +1,7 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { DOCTOR, RECEPTION, signIn } from "./helpers";
 
 // ST-01 (BRD traceability): US-1 staff sign-in with roles.
-
-// Public demo logins (also listed on the sign-in page and in the README).
-const RECEPTION = { email: "reception@queuecare.demo", password: "QueueCare-Reception-1" };
-const DOCTOR = { email: "doctor@queuecare.demo", password: "QueueCare-Doctor-1" };
-
-async function signIn(page: Page, account: { email: string; password: string }) {
-  await page.goto("/login");
-  await page.getByLabel("Email").fill(account.email);
-  await page.getByLabel("Password").fill(account.password);
-  await page.getByRole("button", { name: "Sign in" }).click();
-}
 
 test("ST-01.1 signed-out visitors are sent to sign in from staff screens", async ({ page }) => {
   await page.goto("/reception");
