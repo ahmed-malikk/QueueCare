@@ -11,16 +11,8 @@ export const metadata: Metadata = { title: "Your token · QueueCare", robots: { 
 
 const longDate = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long" });
 
-/** One message in English with a short Roman Urdu line under it (most patients asked for Urdu). */
-function Message({ english, urdu }: { english: string; urdu: string }) {
-  return (
-    <>
-      <p className="text-xl font-bold text-foreground">{english}</p>
-      <p lang="ur-Latn" className="mt-0.5">
-        {urdu}
-      </p>
-    </>
-  );
+function Message({ text }: { text: string }) {
+  return <p className="text-xl font-bold text-foreground">{text}</p>;
 }
 
 function SlipDetails({ status }: { status: PatientStatus }) {
@@ -30,29 +22,23 @@ function SlipDetails({ status }: { status: PatientStatus }) {
       return (
         <>
           {ahead === 0 ? (
-            <Message english="You are next" urdu="Aap agle hain" />
+            <Message text="You are next" />
           ) : (
-            <Message
-              english={`${ahead} ${ahead === 1 ? "patient" : "patients"} ahead of you`}
-              urdu={`Aap se pehle ${ahead} mareez hain`}
-            />
+            <Message text={`${ahead} ${ahead === 1 ? "patient" : "patients"} ahead of you`} />
           )}
           {ahead > 0 && <p className="mt-3 text-base font-semibold text-foreground">{formatEstimate(status.estimate)}</p>}
         </>
       );
     }
     case "called":
-      return <Message english="Please go in now" urdu="Ab andar tashreef le jayein" />;
+      return <Message text="Please go in now" />;
     case "done":
-      return <Message english="Your visit is finished" urdu="Aap ka muaina ho gaya hai" />;
+      return <Message text="Your visit is finished" />;
     case "missed":
-      return <Message english="You were marked as missed. Please speak to reception." urdu="Meharbani kar ke reception se baat karein" />;
+      return <Message text="You were marked as missed. Please speak to reception." />;
     case "another-day":
       return (
-        <Message
-          english={`This token was for ${longDate.format(new Date(status.visitDate))}`}
-          urdu="Aaj ke liye reception se naya token lein"
-        />
+        <Message text={`This token was for ${longDate.format(new Date(status.visitDate))}. Ask reception for today's token.`} />
       );
   }
 }

@@ -8,9 +8,6 @@ export default function TokenNotFound() {
       <p className="mt-2 text-muted-foreground">
         Scan the QR code on your token again, or ask reception for your link.
       </p>
-      <p lang="ur-Latn" className="mt-1 text-muted-foreground">
-        QR code dobara scan karein, ya reception se link lein.
-      </p>
       <Link href="/" className="mt-6 inline-block font-medium text-primary underline-offset-4 hover:underline">
         Go to the QueueCare home page
       </Link>
