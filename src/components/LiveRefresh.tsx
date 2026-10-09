@@ -7,11 +7,16 @@ import { cn } from "@/lib/utils";
 
 type Status = "connecting" | "live" | "reconnecting";
 
+const SAFETY_REFRESH_MS = 30_000;
+
 /**
  * Keeps a page up to date without refreshing. It listens to queue_ticks, a one-row table the
  * database touches whenever any visit changes (it holds no patient data, so public pages can
  * listen too). On a change it re-loads the page's data from the server, which re-applies the
  * same rules and permissions as a normal page load. The pill shows whether the link is live.
+ *
+ * Safety net: a message can be lost (a slow network, a brief disconnect), so the page also
+ * refreshes when the connection comes back and every 30 seconds.
  */
 export function LiveRefresh() {
   const router = useRouter();
@@ -20,6 +25,7 @@ export function LiveRefresh() {
 
   useEffect(() => {
     const supabase = createClient();
+    let dropped = false;
     const channel = supabase
       .channel("queue-ticks")
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "queue_ticks" }, () => {
@@ -28,11 +34,19 @@ export function LiveRefresh() {
         timer.current = setTimeout(() => router.refresh(), 100);
       })
       .subscribe((state) => {
-        if (state === "SUBSCRIBED") setStatus("live");
-        else if (state === "CHANNEL_ERROR" || state === "TIMED_OUT" || state === "CLOSED") setStatus("reconnecting");
+        if (state === "SUBSCRIBED") {
+          setStatus("live");
+          if (dropped) router.refresh(); // back after a drop: catch up on anything missed
+          dropped = false;
+        } else if (state === "CHANNEL_ERROR" || state === "TIMED_OUT" || state === "CLOSED") {
+          setStatus("reconnecting");
+          dropped = true;
+        }
       });
+    const safety = setInterval(() => router.refresh(), SAFETY_REFRESH_MS);
 
     return () => {
+      clearInterval(safety);
       if (timer.current) clearTimeout(timer.current);
       supabase.removeChannel(channel);
     };
