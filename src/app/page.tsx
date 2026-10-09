@@ -1,118 +1,111 @@
-import { Clock, HeartPulse, QrCode, Scale, Smartphone, Stethoscope, UserRoundPlus } from "lucide-react";
+import Link from "next/link";
+import { TokenSlip } from "@/components/TokenSlip";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-const FEATURES = [
-  {
-    icon: HeartPulse,
-    title: "Urgent patients first",
-    text: "Reception marks a patient Urgent or Emergency, and the queue reorders itself straight away.",
-  },
-  {
-    icon: Scale,
-    title: "Fair for everyone else",
-    text: "Every 30 minutes of waiting moves a patient up a level, so nobody is left behind by a busy evening.",
-  },
-  {
-    icon: Smartphone,
-    title: "Your wait on your phone",
-    text: "Patients scan a QR code to see their place and estimated wait. No app, no sign-up.",
-  },
-];
-
-const STEPS = [
-  { icon: UserRoundPlus, title: "Reception registers", text: "Name, walk-in or booked, and urgency. A token is issued." },
-  { icon: QrCode, title: "Patient scans", text: "The token's QR code opens a live status page on their phone." },
-  { icon: Stethoscope, title: "Doctor calls next", text: "One tap calls the right patient; every screen updates." },
-];
-
-/**
- * An illustration of the queue rules, not live data. A-03 has waited 30+ minutes, so it counts
- * as Urgent and goes before A-07 (same level, arrived earlier).
- */
+/** An illustration of the queue rules, not live data. */
 const EXAMPLE_QUEUE = [
-  { token: "A-12", level: "emergency", label: "Emergency", note: "Seen first" },
-  { token: "A-03", level: "urgent", label: "Normal → Urgent", note: "Waited 34 min" },
-  { token: "A-07", level: "urgent", label: "Urgent", note: "Waiting 5 min" },
-  { token: "A-09", level: "normal", label: "Normal", note: "Waiting 12 min" },
+  { token: "A-12", level: "emergency", label: "Emergency", note: "arrived 2 min ago" },
+  { token: "A-03", level: "urgent", label: "Raised to Urgent", note: "waited 34 min" },
+  { token: "A-07", level: "urgent", label: "Urgent", note: "waited 5 min" },
+  { token: "A-09", level: "normal", label: "Normal", note: "waited 12 min" },
+] as const;
+
+const RULES = [
+  ["Emergencies go first.", "Reception marks them, and the queue reorders straight away."],
+  ["Urgent patients come next.", "The doctor decides who is urgent; reception changes it with one tap."],
+  ["Waiting moves you up.", "After 30 minutes, a Normal patient counts as Urgent, so nobody is left behind."],
+  ["Bookings are kept.", "A booked patient counts as arriving 10 minutes before their time."],
+  ["Otherwise, first come, first served.", "Ties go to whoever arrived earlier."],
+] as const;
+
+const SCREENS = [
+  ["Reception desk", "Register a patient in a few taps. The token and its QR code appear on screen for the patient to scan."],
+  ["Doctor", "See who is with you and who is next. One button calls the next patient."],
+  ["Patient's phone", "Scan the token's QR code to see your place and wait. No app and no sign-up."],
 ] as const;
 
 export default function HomePage() {
   return (
     <>
-      <section className="grid items-center gap-10 py-12 md:grid-cols-[1.1fr_0.9fr] md:py-20">
-        <div className="space-y-5">
-          <Badge variant="secondary" className="h-6 px-3">
-            <Clock /> Live clinic queue
-          </Badge>
-          <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-            Urgent patients first. Fair for everyone else.
+      <section className="grid items-center gap-12 py-12 md:grid-cols-[1.15fr_0.85fr] md:py-20">
+        <div>
+          <h1 className="max-w-[16ch] text-4xl leading-[1.05] font-bold tracking-tight text-balance sm:text-6xl">
+            The paper token, now with a wait time.
           </h1>
-          <p className="max-w-[56ch] text-lg text-muted-foreground text-pretty">
-            QueueCare replaces the paper token list at the reception desk. Urgent patients are seen first,
-            everyone else is served fairly in order, and every patient can see their place and estimated
-            wait on their own phone.
+          <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-muted-foreground text-pretty">
+            QueueCare replaces the token list at a small clinic&apos;s reception desk. Urgent patients are seen first,
+            everyone else keeps their place, and every patient can follow the queue on their own phone instead of
+            asking how much longer.
           </p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+            <Button asChild size="lg">
+              <Link href="/login">Try the reception desk</Link>
+            </Button>
+            <a href="#order" className="font-medium text-foreground underline decoration-slip-edge decoration-2 underline-offset-4 hover:decoration-primary">
+              How the order is decided
+            </a>
+          </div>
         </div>
 
-        <Card aria-label="Example queue" className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Example queue</CardTitle>
-            <CardDescription>How QueueCare orders patients</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ol className="divide-y">
+        <figure className="mx-auto w-full max-w-72">
+          <TokenSlip caption="Your token" token="A-14">
+            <p className="text-base font-semibold text-foreground">3 patients ahead of you</p>
+            <p>About 15–25 minutes</p>
+          </TokenSlip>
+          <figcaption className="mt-3 text-center text-sm text-muted-foreground">
+            What the patient sees after scanning the token.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="order" aria-labelledby="order-heading" className="scroll-mt-20 border-t py-14">
+        <div className="grid gap-12 md:grid-cols-2">
+          <div>
+            <h2 id="order-heading" className="text-2xl font-bold tracking-tight">
+              How the order is decided
+            </h2>
+            <dl className="mt-6 space-y-4">
+              {RULES.map(([rule, detail]) => (
+                <div key={rule}>
+                  <dt className="font-semibold">{rule}</dt>
+                  <dd className="text-muted-foreground">{detail}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div>
+            <p className="text-sm text-muted-foreground">For example, at 7 pm the doctor sees, in this order:</p>
+            <ol aria-label="Example queue" className="mt-4 divide-y border-y">
               {EXAMPLE_QUEUE.map((patient, index) => (
-                <li key={patient.token} className="flex items-center gap-3 py-3">
-                  <span className="w-5 text-sm text-muted-foreground tabular-nums">{index + 1}</span>
-                  <span className="font-mono text-lg font-semibold tabular-nums">{patient.token}</span>
+                <li key={patient.token} className="flex items-center gap-4 py-3">
+                  <span className="w-4 text-sm text-muted-foreground tabular-nums">{index + 1}</span>
+                  <span className="token-type w-16 text-3xl">{patient.token}</span>
                   <Badge variant={patient.level}>{patient.label}</Badge>
                   <span className="ml-auto text-sm text-muted-foreground">{patient.note}</span>
                 </li>
               ))}
             </ol>
-          </CardContent>
-        </Card>
-      </section>
-
-      <section aria-labelledby="features" className="pb-12">
-        <h2 id="features" className="sr-only">
-          Features
-        </h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, text }) => (
-            <Card key={title}>
-              <CardHeader>
-                <span className="mb-2 inline-flex size-10 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
-                  <Icon className="size-5" aria-hidden="true" />
-                </span>
-                <CardTitle>{title}</CardTitle>
-                <CardDescription className="text-pretty">{text}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+            <p className="mt-3 text-sm text-muted-foreground">
+              A-03 has waited over 30 minutes, so it goes before A-07, who is urgent but arrived later.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section aria-labelledby="how-it-works" className="pb-16">
-        <h2 id="how-it-works" className="mb-6 text-2xl font-semibold tracking-tight">
-          How it works
+      <section aria-labelledby="screens-heading" className="border-t py-14">
+        <h2 id="screens-heading" className="text-2xl font-bold tracking-tight">
+          One queue, three screens
         </h2>
-        <ol className="grid gap-6 md:grid-cols-3">
-          {STEPS.map(({ icon: Icon, title, text }, index) => (
-            <li key={title} className="flex gap-4">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <Icon className="size-5" aria-hidden="true" />
-              </span>
-              <div>
-                <p className="font-medium">
-                  {index + 1}. {title}
-                </p>
-                <p className="text-sm text-muted-foreground">{text}</p>
-              </div>
-            </li>
+        <div className="mt-6 grid gap-8 md:grid-cols-3">
+          {SCREENS.map(([name, text]) => (
+            <div key={name} className="border-t-2 border-foreground pt-4">
+              <h3 className="font-semibold">{name}</h3>
+              <p className="mt-1 text-muted-foreground text-pretty">{text}</p>
+            </div>
           ))}
-        </ol>
+        </div>
       </section>
     </>
   );

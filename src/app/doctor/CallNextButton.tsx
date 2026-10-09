@@ -21,7 +21,7 @@ export function CallNextButton({ hasWaiting, hasCurrent }: { hasWaiting: boolean
   }
 
   return (
-    <Button size="lg" className="h-14 w-full text-lg" disabled={pending || (!hasWaiting && !hasCurrent)} onClick={press}>
+    <Button size="lg" className="h-14 w-full text-lg font-semibold" disabled={pending || (!hasWaiting && !hasCurrent)} onClick={press}>
       {pending ? <Loader2 className="animate-spin" /> : <BellRing />}
       {pending ? "Calling…" : label}
     </Button>

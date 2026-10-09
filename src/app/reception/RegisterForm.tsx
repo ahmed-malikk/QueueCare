@@ -5,7 +5,6 @@ import { CircleAlert, Loader2, Ticket } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -157,38 +156,38 @@ export function RegisterForm() {
   }, [state]);
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[1fr_minmax(0,22rem)]">
-      <Card>
-        <CardHeader>
-          <CardTitle>Register a patient</CardTitle>
-          <CardDescription>The next token number is assigned automatically.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={formAction} noValidate className="grid gap-5">
-            <Fields key={state.attempt} state={state} />
+    <div className="grid items-start gap-8 lg:grid-cols-[1fr_20rem]">
+      <section aria-labelledby="register-heading" className="rounded-lg border bg-card p-5 sm:p-6">
+        <h2 id="register-heading" className="text-xl font-bold tracking-tight">
+          Register a patient
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">The next token number is given automatically.</p>
+        <form action={formAction} noValidate className="mt-5 grid gap-5">
+          <Fields key={state.attempt} state={state} />
 
-            {state.message && (
-              <Alert variant="destructive">
-                <CircleAlert />
-                <AlertDescription>{state.message}</AlertDescription>
-              </Alert>
-            )}
+          {state.message && (
+            <Alert variant="destructive">
+              <CircleAlert />
+              <AlertDescription>{state.message}</AlertDescription>
+            </Alert>
+          )}
 
-            <Button type="submit" size="lg" disabled={pending} className="w-full sm:w-auto sm:justify-self-start">
-              {pending ? <Loader2 className="animate-spin" /> : <Ticket />}
-              {pending ? "Registering…" : "Register and issue token"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+          <Button type="submit" size="lg" disabled={pending} className="w-full sm:w-auto sm:justify-self-start">
+            {pending ? <Loader2 className="animate-spin" /> : <Ticket />}
+            {pending ? "Registering…" : "Register and issue token"}
+          </Button>
+        </form>
+      </section>
 
       {state.issued ? (
-        <TokenCard issued={state.issued} />
+        <TokenCard key={state.issued.token} issued={state.issued} />
       ) : (
         // Keeps the layout steady on wide screens until the first token is issued.
-        <div className="hidden h-full min-h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed text-center text-muted-foreground lg:flex">
-          <Ticket className="size-8" aria-hidden="true" />
-          <p className="text-sm">The token and its QR code will appear here.</p>
+        <div className="hidden min-h-80 flex-col items-center justify-center gap-1 rounded-sm border-2 border-dashed border-slip-edge px-6 text-center lg:flex">
+          <p className="token-type text-7xl text-slip-edge" aria-hidden="true">
+            A-
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">The next token and its QR code appear here.</p>
         </div>
       )}
 

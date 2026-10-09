@@ -60,9 +60,9 @@ export function SignInForm() {
         </Button>
       </form>
 
-      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+      <div className="flex items-center gap-3 text-sm text-muted-foreground">
         <Separator className="flex-1" />
-        Demo accounts
+        or try a demo account
         <Separator className="flex-1" />
       </div>
       <div className="grid grid-cols-2 gap-2">

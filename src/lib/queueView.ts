@@ -4,7 +4,7 @@
  * so the screen can never disagree with the order "Call next" will use.
  *
  * Each row has: its position (1 = next), the patient, their level right now, whether waiting
- * has raised it, a label such as "Normal → Urgent", and whole minutes waited since arrival.
+ * has raised it, a label such as "Raised to Urgent", and whole minutes waited since arrival.
  */
 import { effectiveLevel, minutesBetween, orderQueue, type QueueVisit, type Urgency } from "./priorityQueue";
 
@@ -24,15 +24,15 @@ export type QueueRow<T extends QueueVisit> = {
   waitedMinutes: number;
 };
 
-/** Task 1: "Normal", "Urgent", "Emergency", or "Normal → Urgent" when waiting raised the level. */
+/** "Normal", "Urgent", "Emergency", or "Raised to Urgent" when waiting has raised the level. */
 export function urgencyLabel(urgency: Urgency, level: number): string {
   if (level > urgency) {
-    return `${URGENCY_NAMES[urgency]} → ${URGENCY_NAMES[level]}`;
+    return `Raised to ${URGENCY_NAMES[level]}`;
   }
   return URGENCY_NAMES[urgency];
 }
 
-/** Task 2: the queue in priority order, one row per patient, numbered from 1. */
+/** The queue in priority order, one row per patient, numbered from 1. */
 export function buildQueueView<T extends QueueVisit>(visits: T[], now: Date): QueueRow<T>[] {
   return orderQueue(visits, now).map((visit, index) => {
     const level = effectiveLevel(visit, now);

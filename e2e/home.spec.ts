@@ -2,9 +2,9 @@ import { expect, test } from "@playwright/test";
 
 test("ST-00 home page loads, shows the logo and fits the screen", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Urgent patients first");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("The paper token");
   await expect(page.getByRole("link", { name: "QueueCare home" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "How it works" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "How the order is decided" })).toBeVisible();
 
   const { scroll, viewport } = await page.evaluate(() => ({
     scroll: document.documentElement.scrollWidth,

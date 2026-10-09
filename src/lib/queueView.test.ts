@@ -17,7 +17,7 @@ describe("UT-17 urgencyLabel: what the receptionist reads on each row", () => {
     expect(urgencyLabel(2, 2)).toBe("Emergency");
   });
   it("shows the raise when waiting has moved a patient up", () => {
-    expect(urgencyLabel(0, 1)).toBe("Normal → Urgent");
+    expect(urgencyLabel(0, 1)).toBe("Raised to Urgent");
   });
 });
 
@@ -42,7 +42,7 @@ describe("UT-18 buildQueueView: the queue as rows, most important first", () => 
 
   it("marks who has been moved up by waiting, and labels it", () => {
     const ali = buildQueueView(queue, now)[1];
-    expect(ali).toMatchObject({ level: 1, aged: true, label: "Normal → Urgent" });
+    expect(ali).toMatchObject({ level: 1, aged: true, label: "Raised to Urgent" });
     const chand = buildQueueView(queue, now)[3];
     expect(chand).toMatchObject({ level: 0, aged: false, label: "Normal" });
   });

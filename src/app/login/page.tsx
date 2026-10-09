@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { LogoMark } from "@/components/Logo";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/dal";
 import { checkAccess } from "@/lib/access";
 import { SignInForm } from "./SignInForm";
@@ -15,19 +13,20 @@ export default async function LoginPage() {
   if (!access.allow) redirect(access.redirectTo);
 
   return (
-    <section className="flex justify-center py-10 sm:py-16">
-      <Card className="w-full max-w-sm shadow-sm">
-        <CardHeader className="text-center">
-          <LogoMark className="mx-auto mb-2 size-11" />
-          <CardTitle>
-            <h1 className="text-xl font-semibold">Staff sign-in</h1>
-          </CardTitle>
-          <CardDescription>For the reception desk and the doctor. Patients don&apos;t need to sign in.</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <section className="grid gap-10 py-12 sm:py-20 md:grid-cols-[24rem_1fr]">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Staff sign-in</h1>
+        <p className="mt-2 text-muted-foreground">For reception and the doctor. Patients don&apos;t need an account.</p>
+        <div className="mt-8 rounded-lg border bg-card p-5 sm:p-6">
           <SignInForm />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      <aside className="hidden self-center border-l-2 border-foreground pl-8 text-muted-foreground md:block">
+        <p className="max-w-[40ch] text-lg leading-relaxed">
+          Reception registers patients and sets urgency. The doctor sees who is next and calls them in. Each of them
+          sees only their own screen.
+        </p>
+      </aside>
     </section>
   );
 }

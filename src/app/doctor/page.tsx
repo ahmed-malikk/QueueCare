@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Stethoscope } from "lucide-react";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TokenSlip } from "@/components/TokenSlip";
 import { requireAccess } from "@/lib/dal";
 import { getWaitingToday, getWithDoctorToday } from "@/lib/queueData";
 import { buildQueueView, URGENCY_NAMES } from "@/lib/queueView";
@@ -34,59 +33,58 @@ export default async function DoctorPage() {
         <LiveRefresh />
       </div>
 
-      <div className="grid items-start gap-6 lg:grid-cols-2">
-        <Card className="border-primary/30 shadow-sm">
-          <CardHeader>
-            <CardTitle>
-              <h2 className="text-lg font-semibold">With you now</h2>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-5">
+      <div className="grid items-start gap-10 lg:grid-cols-[22rem_1fr]">
+        <section aria-labelledby="current-heading">
+          <h2 id="current-heading" className="text-xl font-bold tracking-tight">
+            With you now
+          </h2>
+          <div className="mt-4">
             {withDoctor ? (
-              <div className="text-center">
-                <p data-testid="with-doctor-token" className="font-mono text-6xl font-bold text-primary tabular-nums">
-                  {formatToken(withDoctor.tokenNumber)}
-                </p>
-                <p className="mt-1 text-lg font-medium">{withDoctor.patientName}</p>
-                <Badge variant={BADGE[withDoctor.urgency]} className="mt-2">
-                  {URGENCY_NAMES[withDoctor.urgency]}
-                </Badge>
-              </div>
+              <TokenSlip
+                key={withDoctor.id}
+                print
+                caption={withDoctor.patientName}
+                token={formatToken(withDoctor.tokenNumber)}
+                tokenTestId="with-doctor-token"
+              >
+                <Badge variant={BADGE[withDoctor.urgency]}>{URGENCY_NAMES[withDoctor.urgency]}</Badge>
+              </TokenSlip>
             ) : (
-              <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground">
-                <Stethoscope className="size-8" aria-hidden="true" />
-                <p className="text-sm">Nobody yet. Press Call next to bring in the first patient.</p>
+              <div className="flex min-h-56 flex-col items-center justify-center rounded-sm border-2 border-dashed border-slip-edge px-6 text-center">
+                <p className="text-muted-foreground">Nobody yet. Call the first patient when you are ready.</p>
               </div>
             )}
+          </div>
+          <div className="mt-5">
             <CallNextButton hasWaiting={rows.length > 0} hasCurrent={withDoctor !== null} />
-          </CardContent>
-        </Card>
+          </div>
+        </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              <h2 className="text-lg font-semibold">Next up</h2>
-            </CardTitle>
-            <CardDescription data-testid="waiting-count">
+        <section aria-labelledby="next-heading">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="next-heading" className="text-xl font-bold tracking-tight">
+              Next up
+            </h2>
+            <p data-testid="waiting-count" className="text-sm text-muted-foreground">
               {rows.length === 0 ? "Nobody is waiting." : `${rows.length} waiting`}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ol aria-label="Next patients" className="divide-y">
+            </p>
+          </div>
+          {rows.length > 0 && (
+            <ol aria-label="Next patients" className="mt-4 divide-y border-y">
               {rows.slice(0, NEXT_UP).map((row) => (
                 <li key={row.visit.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
-                  <span className="w-6 text-sm text-muted-foreground tabular-nums">{row.position}</span>
-                  <span className="w-16 font-mono text-lg font-semibold tabular-nums">
-                    {formatToken(row.visit.tokenNumber)}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate">{row.visit.patientName}</span>
+                  <span className="w-4 text-sm text-muted-foreground tabular-nums">{row.position}</span>
+                  <span className="token-type w-16 text-3xl">{formatToken(row.visit.tokenNumber)}</span>
+                  <span className="min-w-0 flex-1 truncate font-medium">{row.visit.patientName}</span>
                   <Badge variant={BADGE[row.level]}>{row.label}</Badge>
-                  <span className="w-24 text-right text-sm text-muted-foreground">{row.waitedMinutes} min</span>
+                  <span className="w-20 text-right text-sm text-muted-foreground tabular-nums">
+                    {row.waitedMinutes} min
+                  </span>
                 </li>
               ))}
             </ol>
-          </CardContent>
-        </Card>
+          )}
+        </section>
       </div>
     </section>
   );
