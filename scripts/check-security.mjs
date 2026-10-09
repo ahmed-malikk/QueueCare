@@ -54,10 +54,34 @@ const reception = await signedIn(env.DEMO_RECEPTION_EMAIL, env.DEMO_RECEPTION_PA
   check("Receptionist can see the queue", !error && data.length > 0, error?.message ?? `${data.length} visits`);
 }
 let testId;
+let testCode;
+let testToken;
 {
-  const { data, error } = await reception.from("visits").insert(testVisit).select("id, token_number").single();
+  const { data, error } = await reception
+    .from("visits")
+    .insert(testVisit)
+    .select("id, token_number, public_code")
+    .single();
   testId = data?.id;
+  testCode = data?.public_code;
+  testToken = data?.token_number;
   check("Receptionist can register a patient and gets a token number", !error && data?.token_number >= 1, error?.message);
+}
+
+// ── Patient status page (002): public, by the secret code only ──
+{
+  const { data, error } = await anon.rpc("visit_status", { p_code: testCode });
+  const text = JSON.stringify(data ?? {});
+  check("Public can read a token's status with its code", !error && data?.token_number === testToken, error?.message);
+  check(
+    "The status shows no names and no other token numbers",
+    !error && !text.includes("Security check") && !text.includes("patient_name") &&
+      (data?.waiting ?? []).every((visit) => !("token_number" in visit)),
+  );
+}
+{
+  const { data, error } = await anon.rpc("visit_status", { p_code: "0".repeat(32) });
+  check("A wrong code shows nothing", !error && data === null, error?.message);
 }
 
 // ── Doctor ──
