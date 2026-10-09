@@ -10,6 +10,8 @@ const remote = process.env.E2E_BASE_URL;
 
 export default defineConfig({
   testDir: "e2e",
+  // Marks this run's leftover test patients as missed (see e2e/global-teardown.ts).
+  globalTeardown: "./e2e/global-teardown.ts",
   fullyParallel: true,
   retries: 0,
   reporter: [["list"], ["html", { open: "never" }]],
