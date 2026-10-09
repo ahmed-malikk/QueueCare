@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LiveRefresh } from "@/components/LiveRefresh";
 import { requireAccess } from "@/lib/dal";
 import { getWaitingToday } from "@/lib/queueData";
 import { buildQueueView } from "@/lib/queueView";
@@ -18,9 +19,12 @@ export default async function ReceptionPage() {
   return (
     <section className="pb-12">
       <StaffBar user={user} />
-      <div className="py-6">
-        <h1 className="text-3xl font-semibold tracking-tight">Reception desk</h1>
-        <p className="mt-1 text-muted-foreground">Register patients, set urgency and see today&apos;s queue.</p>
+      <div className="flex flex-wrap items-end justify-between gap-3 py-6">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">Reception desk</h1>
+          <p className="mt-1 text-muted-foreground">Register patients, set urgency and see today&apos;s queue.</p>
+        </div>
+        <LiveRefresh />
       </div>
       <div className="grid gap-6">
         <RegisterForm />

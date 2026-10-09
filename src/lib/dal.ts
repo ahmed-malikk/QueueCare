@@ -12,11 +12,14 @@ export type Staff = { id: string; email: string; role: Role };
  */
 export const getCurrentUser = cache(async (): Promise<Staff | null> => {
   const supabase = await createClient();
-  const { data: auth } = await supabase.auth.getUser(); // asks Supabase, so a forged cookie fails
-  if (!auth.user) return null;
+  // Checks the login token's signature (ES256) here, without a network trip, so a forged or
+  // expired cookie fails. Faster than getUser(), which asks the Auth server every time.
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (!claims?.sub) return null;
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", auth.user.id).single();
-  return { id: auth.user.id, email: auth.user.email ?? "", role: (profile?.role ?? "patient") as Role };
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", claims.sub).single();
+  return { id: claims.sub, email: typeof claims.email === "string" ? claims.email : "", role: (profile?.role ?? "patient") as Role };
 });
 
 /**

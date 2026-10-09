@@ -13,6 +13,8 @@ export default defineConfig({
   fullyParallel: true,
   retries: 0,
   reporter: [["list"], ["html", { open: "never" }]],
+  // Pages talk to Supabase in Mumbai; from a home connection one round trip can take over a second.
+  expect: { timeout: 10_000 },
   use: {
     baseURL: remote ?? `http://localhost:${PORT}`,
     trace: "retain-on-failure",

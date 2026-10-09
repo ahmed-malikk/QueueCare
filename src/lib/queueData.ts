@@ -79,3 +79,16 @@ export async function estimateForNewPatient(supabase: SupabaseClient, patient: R
   const patientsAhead = orderQueue([...waiting, newVisit], now).findIndex((visit) => visit.id === "new");
   return { patientsAhead, ...estimateWait(patientsAhead, recent) };
 }
+
+/** The patient with the doctor right now (called today, not finished yet), or null. */
+export async function getWithDoctorToday(supabase: SupabaseClient, now: Date): Promise<StaffVisit | null> {
+  const { data, error } = await supabase
+    .from("visits")
+    .select("id, patient_name, token_number, urgency, kind, arrived_at, booked_at")
+    .eq("visit_date", clinicDay(now))
+    .eq("status", "called")
+    .order("called_at", { ascending: false })
+    .limit(1);
+  if (error) throw error;
+  return data && data.length > 0 ? toStaffVisit(data[0]) : null;
+}
