@@ -12,7 +12,10 @@ export default defineConfig({
   testDir: "e2e",
   // Marks this run's leftover test patients as missed (see e2e/global-teardown.ts).
   globalTeardown: "./e2e/global-teardown.ts",
-  fullyParallel: true,
+  // One test at a time: every browser profile shares one demo queue in Supabase, and parallel
+  // runs both change each other's data and overload the single local server with live refreshes.
+  fullyParallel: false,
+  workers: 1,
   retries: 0,
   reporter: [["list"], ["html", { open: "never" }]],
   // Pages talk to Supabase in Mumbai; from a home connection one round trip can take over a second.
