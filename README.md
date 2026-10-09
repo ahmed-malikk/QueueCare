@@ -4,7 +4,7 @@
 
 [![Tests](https://github.com/ahmed-malikk/QueueCare/actions/workflows/test.yml/badge.svg)](https://github.com/ahmed-malikk/QueueCare/actions/workflows/test.yml)
 
-**Live:** [queuecare-zeta.vercel.app](https://queuecare-zeta.vercel.app) · **PRD:** [docs/PRD.md](docs/PRD.md) · **BRD:** [docs/BRD.md](docs/BRD.md) · **Tests:** [plan](docs/test-plan.md) · [report](docs/test-report.md) · **Pilot:** [plan](docs/pilot-plan.md) · **Board:** [project](https://github.com/users/ahmed-malikk/projects/1)
+**Live:** [queuecare-zeta.vercel.app](https://queuecare-zeta.vercel.app) · **PRD:** [docs/PRD.md](docs/PRD.md) · **BRD:** [docs/BRD.md](docs/BRD.md) · **Tests:** [plan](docs/test-plan.md) · [report](docs/test-report.md) · **Pilot:** [plan](docs/pilot-plan.md) · **Lessons:** [lessons learned](docs/lessons-learned.md) · **Board:** [project](https://github.com/users/ahmed-malikk/projects/1)
 
 ![The reception desk: a registration form, the token just issued as a slip with its QR code, and today's queue in priority order (demo data)](docs/screenshots/reception.png)
 
