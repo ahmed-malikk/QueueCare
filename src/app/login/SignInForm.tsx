@@ -7,15 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { DEMO_ACCOUNTS } from "@/lib/demoAccounts";
 import { signIn, type SignInState } from "./actions";
 
 const initialState: SignInState = { error: null };
-
-// Public demo logins, so anyone reviewing the project can try both roles.
-const DEMO_ACCOUNTS = [
-  { label: "Try as Reception", email: "reception@queuecare.demo", password: "QueueCare-Reception-1" },
-  { label: "Try as Doctor", email: "doctor@queuecare.demo", password: "QueueCare-Doctor-1" },
-];
 
 export function SignInForm() {
   const [state, formAction, pending] = useActionState(signIn, initialState);
@@ -66,7 +61,7 @@ export function SignInForm() {
         <Separator className="flex-1" />
       </div>
       <div className="grid grid-cols-2 gap-2">
-        {DEMO_ACCOUNTS.map((account) => (
+        {Object.values(DEMO_ACCOUNTS).map((account) => (
           <Button
             key={account.label}
             type="button"

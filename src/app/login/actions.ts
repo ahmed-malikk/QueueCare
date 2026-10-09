@@ -5,6 +5,7 @@ import type { AuthError } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/dal";
 import { homeFor } from "@/lib/access";
+import { DEMO_ACCOUNTS, type DemoRole } from "@/lib/demoAccounts";
 
 export type SignInState = { error: string | null };
 
@@ -38,6 +39,22 @@ export async function signIn(_previous: SignInState, formData: FormData): Promis
     return { error: "This account isn't a staff account." };
   }
   redirect(homeFor(user.role));
+}
+
+/**
+ * The home page's "Try" buttons: sign in with a public demo account in one step.
+ * If that fails (say the sign-in service is down), the sign-in page explains and offers the form.
+ */
+export async function signInAsDemo(role: DemoRole) {
+  const account = DEMO_ACCOUNTS[role];
+  if (!account) redirect("/login");
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email: account.email, password: account.password });
+  if (error) {
+    console.error("Demo sign-in failed:", error.status, error.code, error.message);
+    redirect("/login");
+  }
+  redirect(homeFor(role));
 }
 
 export async function signOut() {

@@ -37,3 +37,33 @@ test("ST-00.3 staff screens show a Home button in the header", async ({ page }) 
   await expect(page.getByRole("link", { name: "Home", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Staff", exact: true })).toHaveCount(0);
 });
+
+test("ST-00.4 signed-in staff see a shortcut to their screen instead of Staff", async ({ page }) => {
+  await signIn(page, RECEPTION);
+  await expect(page).toHaveURL(/\/reception$/);
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "Staff", exact: true })).toHaveCount(0);
+  await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Reception desk" }).click();
+  await expect(page).toHaveURL(/\/reception$/);
+});
+
+test("ST-00.5 'Try the reception desk' signs in with the demo account in one step", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Try the reception desk" }).click();
+  await expect(page).toHaveURL(/\/reception$/);
+  await expect(page.getByRole("heading", { name: "Reception desk" })).toBeVisible();
+});
+
+test("ST-00.6 the example queue report shows an emergency arriving, and replays it", async ({ page }) => {
+  await page.goto("/");
+  const report = page.getByRole("figure").filter({ hasText: "Queue report" });
+  const firstToken = report.locator("tbody tr").first().locator(".token-type");
+  // The demo starts when the report is on screen (on a phone it is below the fold).
+  await report.scrollIntoViewIfNeeded();
+  await expect(firstToken).toHaveText("A-16");
+  await expect(report).toContainText("20–35");
+
+  await page.getByRole("button", { name: "Watch an emergency arrive" }).click();
+  await expect(firstToken).toHaveText("A-3");
+  await expect(firstToken).toHaveText("A-16");
+});

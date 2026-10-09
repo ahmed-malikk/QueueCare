@@ -89,6 +89,7 @@ The system under test is the **production build** (`next build` + `next start` l
 | UT-19 | `planCallNext` | Finish the current patient, call the next, flag a priority call | US-4 |
 | UT-20 | `describeStatus` | The patient's place and wait from anonymous queue data; called, finished, missed, another day | US-5 |
 | UT-21 | `describeWaitingRoom` | Now serving, next three, priority flag | US-6 |
+| UT-22 | `demoQueue` | The home page's example queue follows the real order and estimate rules, before and after an emergency | #18 |
 
 ## 7. Security checks (`npm run check:security`)
 
