@@ -34,7 +34,8 @@ test("ST-00.3 staff screens have one header: their screen and Sign out, no sign-
   await signIn(page, RECEPTION);
   await expect(page).toHaveURL(/\/reception$/);
   const header = page.getByRole("banner");
-  await expect(header.getByRole("link", { name: "Reception desk" })).toBeVisible();
+  // The screen name sits beside the logo (hidden on narrow phones, as in the design).
+  await expect(header.getByText("Reception desk")).toHaveCount(1);
   await expect(header.getByRole("button", { name: "Sign out" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Staff sign in" })).toHaveCount(0);
   // The old second bar is gone: exactly one Sign out button on the page.
@@ -56,6 +57,8 @@ test("ST-00.5 after signing out the header offers sign-in again", async ({ page 
   await expect(page).toHaveURL(/\/reception$/);
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/login$/);
+  // The sign-in page's header is just the logo.
+  await expect(page.getByRole("button", { name: "Sign out" })).toHaveCount(0);
+  await page.getByRole("link", { name: "QueueCare home" }).click();
   await expect(page.getByRole("link", { name: "Staff sign in" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Reception desk" })).toHaveCount(0);
 });

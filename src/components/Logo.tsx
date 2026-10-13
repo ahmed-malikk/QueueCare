@@ -2,16 +2,14 @@ import { cn } from "@/lib/utils";
 
 /**
  * The QueueCare mark: a "Q" whose tail is a medical cross (queue + care).
+ * Drawn in the current text colour, so it works on light and dark screens.
  * The same drawing is the browser tab icon (src/app/icon.svg).
  */
 export function LogoMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" aria-hidden="true" className={cn("size-8", className)}>
-      <rect width="32" height="32" rx="8" className="fill-primary" />
-      <circle cx="14.5" cy="14.5" r="7" fill="none" stroke="white" strokeWidth="3" />
-      {/* A teal outline under the cross leaves a small gap where it meets the ring. */}
-      <path d="M22.5 18v9M18 22.5h9" className="stroke-primary" strokeWidth="6.5" strokeLinecap="round" />
-      <path d="M22.5 18v9M18 22.5h9" stroke="white" strokeWidth="3" strokeLinecap="round" />
+    <svg viewBox="0 0 40 40" aria-hidden="true" className={cn("size-7", className)}>
+      <circle cx="18" cy="18" r="12" fill="none" stroke="currentColor" strokeWidth="5" />
+      <path d="M27 25h4v4h4v4h-4v4h-4v-4h-4v-4h4z" fill="currentColor" />
     </svg>
   );
 }
@@ -19,9 +17,9 @@ export function LogoMark({ className }: { className?: string }) {
 /** The mark plus the name, for the header and footer. */
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
+    <span className={cn("inline-flex items-center gap-2.5 text-primary", className)}>
       <LogoMark />
-      <span className="font-heading text-[1.4rem] leading-none tracking-tight text-primary">QueueCare</span>
+      <span className="text-[1.45rem] leading-none tracking-tight">QueueCare</span>
     </span>
   );
 }

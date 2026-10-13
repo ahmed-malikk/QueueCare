@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { AnimatedItem, AnimatedList } from "@/components/AnimatedList";
-import { LiveRefresh } from "@/components/LiveRefresh";
 import { Badge } from "@/components/ui/badge";
 import { TokenSlip } from "@/components/TokenSlip";
 import { requireAccess } from "@/lib/dal";
-import { isDemoEmail } from "@/lib/demo";
 import { getWaitingToday, getWithDoctorToday } from "@/lib/queueData";
 import { buildQueueView, URGENCY_NAMES } from "@/lib/queueView";
 import { formatToken } from "@/lib/registration";
 import { createClient } from "@/lib/supabase/server";
-import { DemoStrip } from "../DemoStrip";
 import { CallNextButton } from "./CallNextButton";
 
 export const metadata: Metadata = { title: "Doctor · QueueCare" };
@@ -18,7 +15,7 @@ const BADGE = ["normal", "urgent", "emergency"] as const;
 const NEXT_UP = 5;
 
 export default async function DoctorPage() {
-  const user = await requireAccess("/doctor");
+  await requireAccess("/doctor");
   const now = new Date();
   const supabase = await createClient();
   const [waiting, withDoctor] = await Promise.all([getWaitingToday(supabase, now), getWithDoctorToday(supabase, now)]);
@@ -26,13 +23,11 @@ export default async function DoctorPage() {
 
   return (
     <section className="pb-12">
-      {isDemoEmail(user.email) && <DemoStrip role="doctor" />}
       <div className="flex flex-wrap items-end justify-between gap-3 py-6">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Doctor&apos;s screen</h1>
           <p className="mt-1 text-muted-foreground">See who is next and call them in.</p>
         </div>
-        <LiveRefresh />
       </div>
 
       <div className="grid items-start gap-10 lg:grid-cols-[22rem_1fr]">

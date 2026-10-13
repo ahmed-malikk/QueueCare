@@ -58,17 +58,13 @@ export function LiveRefresh({ tone = "light" }: { tone?: "light" | "dark" }) {
       data-testid="live-status"
       data-state={status}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium",
-        tone === "dark"
-          ? "border-white/25 text-white/80"
-          : status === "live"
-            ? "border-success/30 text-success"
-            : "text-muted-foreground",
+        "inline-flex items-center gap-[7px] text-[13px] font-medium",
+        tone === "dark" ? "text-white/80" : status === "live" ? "text-success" : "text-muted-foreground",
       )}
     >
       <span
         aria-hidden="true"
-        className={cn("size-2 rounded-full", status === "live" ? "animate-pulse bg-success" : "bg-muted-foreground")}
+        className={cn("size-2 rounded-full", status === "live" ? "bg-success" : "bg-muted-foreground")}
       />
       {status === "live" ? "Live" : status === "connecting" ? "Connecting…" : "Reconnecting…"}
     </span>

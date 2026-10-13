@@ -11,7 +11,7 @@ test("ST-08.1 the demo strip switches between reception and the doctor", async (
 
   await strip.getByRole("button", { name: "Switch to the doctor" }).click();
   await expect(page).toHaveURL(/\/doctor$/);
-  await expect(page.getByRole("banner").getByRole("link", { name: "Doctor's screen" })).toBeVisible();
+  await expect(page.getByRole("banner").getByText("Doctor's screen")).toHaveCount(1);
 
   await page.getByRole("region", { name: "Demo shortcuts" }).getByRole("button", { name: "Switch to reception" }).click();
   await expect(page).toHaveURL(/\/reception$/);

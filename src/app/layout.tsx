@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={manrope.variable}>
       <body className="flex flex-col">
         <SiteHeader />
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4">{children}</main>
+        <main className="mx-auto w-full max-w-[80rem] flex-1 px-4 sm:px-6">{children}</main>
         <SiteFooter />
         <Toaster position="top-center" richColors />
       </body>
