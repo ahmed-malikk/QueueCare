@@ -8,7 +8,7 @@ test("ST-01.1 signed-out visitors are sent to sign in from staff screens", async
   await expect(page).toHaveURL(/\/login$/);
   await page.goto("/doctor");
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole("heading", { name: "Staff sign-in" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Staff sign in" })).toBeVisible();
 });
 
 test("ST-01.2 a wrong password shows an error and stays on sign-in", async ({ page }) => {
@@ -60,7 +60,7 @@ test("ST-01.6 the sign-in page fits the screen", async ({ page }) => {
 
 test("ST-01.7 the demo buttons fill in a demo login", async ({ page }) => {
   await page.goto("/login");
-  await page.getByRole("button", { name: "Try as Reception" }).click();
+  await page.getByRole("button", { name: /Try the demo as reception/ }).click();
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/reception$/);
 });

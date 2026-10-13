@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/dal";
 import { checkAccess } from "@/lib/access";
-import { SignInForm } from "./SignInForm";
+import { DemoAccounts, SignInForm } from "./SignInForm";
 
-export const metadata: Metadata = { title: "Staff sign-in · QueueCare" };
+export const metadata: Metadata = { title: "Staff sign in · QueueCare" };
 
 export default async function LoginPage() {
   // Staff who are already signed in go straight to their screen.
@@ -13,20 +13,23 @@ export default async function LoginPage() {
   if (!access.allow) redirect(access.redirectTo);
 
   return (
-    <section className="grid gap-10 py-12 sm:py-20 md:grid-cols-[24rem_1fr]">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Staff sign-in</h1>
-        <p className="mt-2 text-muted-foreground">For reception and the doctor. Patients don&apos;t need an account.</p>
-        <div className="mt-8 rounded-lg border bg-card p-5 sm:p-6">
-          <SignInForm />
+    <section className="grid gap-3.5 py-8 sm:py-12 md:grid-cols-2">
+      <div className="flex flex-col rounded-[1.25rem] bg-sage p-7 sm:p-10">
+        <h1 className="text-4xl leading-tight text-primary sm:text-5xl">Staff sign in</h1>
+        <p className="mt-4 max-w-[40ch] text-[#26392e]">
+          For reception and the doctor. Patients never need an account: they follow the queue from the code on their
+          token.
+        </p>
+        <div className="mt-8 md:mt-auto md:pt-10">
+          <DemoAccounts />
         </div>
       </div>
-      <aside className="hidden self-center border-l-2 border-foreground pl-8 text-muted-foreground md:block">
-        <p className="max-w-[40ch] text-lg leading-relaxed">
-          Reception registers patients and sets urgency. The doctor sees who is next and calls them in. Each of them
-          sees only their own screen.
-        </p>
-      </aside>
+
+      <div className="rounded-[1.25rem] border bg-card p-7 sm:p-10">
+        <h2 className="text-2xl text-primary">Clinic account</h2>
+        <p className="mt-1 mb-6 text-sm text-muted-foreground">Use the email and password your clinic gave you.</p>
+        <SignInForm />
+      </div>
     </section>
   );
 }
