@@ -155,13 +155,20 @@
 
   /* A new token slides out, like a slip leaving the printer. */
   .slip-print {
-    animation: slip-print 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation: slip-print 650ms var(--ease-out-soft) both;
   }
 }
 
 @keyframes slip-print {
-  from { transform: translateY(-14px); clip-path: inset(0 0 100% 0); }
-  to { transform: translateY(0); clip-path: inset(0 0 0 0); }
+  from { transform: translateY(-105%); }
+  to { transform: translateY(0); }
+}
+
+/* A choice that has just been picked gives a small bounce. */
+@keyframes pick {
+  0% { transform: scale(0.94); }
+  60% { transform: scale(1.03); }
+  100% { transform: none; }
 }
 
 @keyframes page-enter {

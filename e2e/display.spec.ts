@@ -30,7 +30,7 @@ test("ST-06.2 calling an emergency ahead of others updates the display live and 
       await reception.getByLabel("Patient name or initials").fill("E2E test patient");
       await reception.getByText(urgency, { exact: true }).first().click();
       await reception.getByRole("button", { name: "Register and issue token" }).click();
-      await expect(reception.getByText(/Token issued for E2E test patient/)).toBeVisible();
+      await expect(reception.getByText(/Token for E2E test patient/)).toBeVisible();
     }
     const emergency = (await reception.getByTestId("issued-token").textContent())!.trim();
 

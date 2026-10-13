@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { CircleAlert, Loader2, Ticket } from "lucide-react";
+import { CircleAlert, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ const KINDS = [
 ];
 
 const URGENCIES = [
-  { value: "0", label: "Normal", checked: "peer-checked:border-primary peer-checked:bg-secondary peer-checked:text-secondary-foreground" },
+  { value: "0", label: "Normal", checked: "peer-checked:border-primary peer-checked:bg-secondary peer-checked:text-primary" },
   { value: "1", label: "Urgent", checked: "peer-checked:border-urgent peer-checked:bg-urgent-soft peer-checked:text-urgent" },
   { value: "2", label: "Emergency", checked: "peer-checked:border-emergency peer-checked:bg-emergency-soft peer-checked:text-emergency" },
 ];
@@ -45,9 +45,10 @@ function Choice(props: {
       />
       <span
         className={cn(
-          "flex h-11 cursor-pointer items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium transition-colors",
-          "hover:bg-muted peer-focus-visible:ring-3 peer-focus-visible:ring-ring/50",
-          props.checkedClass ?? "peer-checked:border-primary peer-checked:bg-secondary peer-checked:text-secondary-foreground",
+          "flex h-11 cursor-pointer items-center justify-center rounded-[10px] border-[1.5px] border-border bg-card px-3 text-sm font-semibold text-muted-foreground",
+          "transition-[translate,background-color,border-color,color] duration-150 hover:-translate-y-px hover:bg-background motion-reduce:hover:translate-y-0",
+          "peer-checked:animate-[pick_.28s_var(--ease-out-soft)] peer-focus-visible:ring-3 peer-focus-visible:ring-ring/50 motion-reduce:peer-checked:animate-none",
+          props.checkedClass ?? "peer-checked:border-primary peer-checked:bg-secondary peer-checked:text-primary",
         )}
       >
         {props.label}
@@ -80,9 +81,10 @@ function Fields({ state }: { state: RegisterState }) {
   return (
     <>
       <div className="grid gap-2">
-        <Label htmlFor="name">Patient name or initials</Label>
+        <Label htmlFor="name" className="font-semibold">Patient name or initials</Label>
         <Input
           ref={nameRef}
+          className="h-[46px] rounded-[10px] border-[1.5px]"
           id="name"
           name="name"
           defaultValue={values?.name ?? ""}
@@ -95,8 +97,8 @@ function Fields({ state }: { state: RegisterState }) {
       </div>
 
       <fieldset className="grid gap-2">
-        <legend className="mb-2 text-sm font-medium">Type</legend>
-        <div className="flex gap-2">
+        <legend className="mb-1.5 text-sm font-semibold">Visit</legend>
+        <div className="flex gap-1.5">
           {KINDS.map((option) => (
             <Choice
               key={option.value}
@@ -113,13 +115,13 @@ function Fields({ state }: { state: RegisterState }) {
 
       {kind === "booked" && (
         <div className="grid gap-2">
-          <Label htmlFor="bookedTime">Booked time</Label>
+          <Label htmlFor="bookedTime" className="font-semibold">Booked time</Label>
           <Input
             id="bookedTime"
             name="bookedTime"
             type="time"
             defaultValue={values?.bookedTime ?? ""}
-            className="w-40"
+            className="h-[46px] w-40 rounded-[10px] border-[1.5px]"
             aria-invalid={Boolean(state.errors.bookedTime)}
             aria-describedby={state.errors.bookedTime ? "bookedTime-error" : undefined}
           />
@@ -128,8 +130,8 @@ function Fields({ state }: { state: RegisterState }) {
       )}
 
       <fieldset className="grid gap-2">
-        <legend className="mb-2 text-sm font-medium">Urgency</legend>
-        <div className="flex gap-2">
+        <legend className="mb-1.5 text-sm font-semibold">Urgency</legend>
+        <div className="flex gap-1.5">
           {URGENCIES.map((option) => (
             <Choice
               key={option.value}
@@ -156,39 +158,33 @@ export function RegisterForm() {
   }, [state]);
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[1fr_20rem]">
-      <section aria-labelledby="register-heading" className="rounded-lg border bg-card p-5 sm:p-6">
-        <h2 id="register-heading" className="text-xl font-bold tracking-tight">
-          Register a patient
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">The next token number is given automatically.</p>
-        <form action={formAction} noValidate className="mt-5 grid gap-5">
-          <Fields key={state.attempt} state={state} />
+    <section aria-labelledby="register-heading" className="rounded-[20px] border bg-card p-6">
+      <h2 id="register-heading" className="text-[26px] leading-tight text-primary">
+        Register a patient
+      </h2>
+      <p className="mt-0.5 mb-[18px] text-sm text-muted-foreground">The token number is given automatically.</p>
+      <form action={formAction} noValidate className="grid gap-4">
+        <Fields key={state.attempt} state={state} />
 
-          {state.message && (
-            <Alert variant="destructive">
-              <CircleAlert />
-              <AlertDescription>{state.message}</AlertDescription>
-            </Alert>
-          )}
+        {state.message && (
+          <Alert variant="destructive">
+            <CircleAlert />
+            <AlertDescription>{state.message}</AlertDescription>
+          </Alert>
+        )}
 
-          <Button type="submit" size="lg" disabled={pending} className="w-full sm:w-auto sm:justify-self-start">
-            {pending ? <Loader2 className="animate-spin" /> : <Ticket />}
-            {pending ? "Registering…" : "Register and issue token"}
-          </Button>
-        </form>
-      </section>
+        <Button type="submit" size="lg" disabled={pending} className="h-[52px] w-full rounded-[10px] text-base font-semibold">
+          {pending && <Loader2 className="animate-spin" />}
+          {pending ? "Registering…" : "Register and issue token"}
+        </Button>
+      </form>
 
       {state.issued ? (
         <TokenCard key={state.issued.token} issued={state.issued} />
       ) : (
-        // Keeps the layout steady on wide screens until the first token is issued.
-        <div className="hidden min-h-80 flex-col items-center justify-center gap-1 rounded-sm border-2 border-dashed border-slip-edge px-6 text-center lg:flex">
-          <p className="token-type text-7xl text-slip-edge" aria-hidden="true">
-            A-
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">The next token and its QR code appear here.</p>
-        </div>
+        <p className="mt-[18px] rounded-xl border-[1.5px] border-dashed border-border p-[18px] text-center text-sm text-muted-foreground">
+          The new token, its wait and its QR code appear here.
+        </p>
       )}
 
       {/* Always on the page, so screen readers announce each new token (a live region
@@ -196,6 +192,6 @@ export function RegisterForm() {
       <p role="status" className="sr-only">
         {state.issued ? `Token ${state.issued.token} issued for ${state.issued.patientName}.` : ""}
       </p>
-    </div>
+    </section>
   );
 }

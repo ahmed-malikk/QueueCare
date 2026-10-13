@@ -18,7 +18,7 @@ test("ST-02.1 registering a walk-in issues a token with a QR code, ready for the
   await page.getByRole("button", { name: "Register and issue token" }).click();
 
   await expect(page.getByTestId("issued-token")).toHaveText(/^A-\d+$/);
-  await expect(page.getByText("Token issued for E2E test patient")).toBeVisible();
+  await expect(page.getByText("Token for E2E test patient")).toBeVisible();
   await expect(page.getByRole("img", { name: /QR code for token A-\d+/ })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open status page" })).toHaveAttribute("href", /\/status\/[0-9a-f]{32}$/);
 
