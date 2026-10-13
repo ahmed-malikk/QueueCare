@@ -1,4 +1,5 @@
 import { LogoMark } from "@/components/Logo";
+import { PUBLIC_LINKS } from "@/components/SiteHeader";
 
 export function SiteFooter() {
   return (
@@ -8,14 +9,19 @@ export function SiteFooter() {
           <LogoMark className="size-5" />
           QueueCare, a live queue for small clinics
         </span>
-        <a
-          href="https://github.com/ahmed-malikk/QueueCare"
-          className="hover:text-foreground"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Source on GitHub
-        </a>
+        <ul className="flex flex-wrap gap-x-6 gap-y-2">
+          {PUBLIC_LINKS.map((link) => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                className="hover:text-foreground"
+                {...("external" in link ? { target: "_blank", rel: "noreferrer" } : {})}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </footer>
   );

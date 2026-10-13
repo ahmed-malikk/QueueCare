@@ -8,7 +8,6 @@ import { getWaitingToday, getWithDoctorToday } from "@/lib/queueData";
 import { buildQueueView, URGENCY_NAMES } from "@/lib/queueView";
 import { formatToken } from "@/lib/registration";
 import { createClient } from "@/lib/supabase/server";
-import { StaffBar } from "../StaffBar";
 import { CallNextButton } from "./CallNextButton";
 
 export const metadata: Metadata = { title: "Doctor · QueueCare" };
@@ -17,7 +16,7 @@ const BADGE = ["normal", "urgent", "emergency"] as const;
 const NEXT_UP = 5;
 
 export default async function DoctorPage() {
-  const user = await requireAccess("/doctor");
+  await requireAccess("/doctor");
   const now = new Date();
   const supabase = await createClient();
   const [waiting, withDoctor] = await Promise.all([getWaitingToday(supabase, now), getWithDoctorToday(supabase, now)]);
@@ -25,7 +24,6 @@ export default async function DoctorPage() {
 
   return (
     <section className="pb-12">
-      <StaffBar user={user} />
       <div className="flex flex-wrap items-end justify-between gap-3 py-6">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Doctor&apos;s screen</h1>

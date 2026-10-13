@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { RECEPTION, signIn } from "./helpers";
+import { DOCTOR, RECEPTION, signIn } from "./helpers";
 
 test("ST-00 home page loads, shows the logo and fits the screen", async ({ page }) => {
   await page.goto("/");
@@ -20,20 +20,42 @@ test("ST-00.1 the browser tab icon is the QueueCare logo", async ({ request }) =
   expect(icon.headers()["content-type"]).toContain("svg");
 });
 
-test("ST-00.2 the header offers a way home from the sign-in page", async ({ page }) => {
+test("ST-00.2 visitors see Staff sign in, and the logo leads home", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Staff", exact: true }).click();
+  await page.getByRole("link", { name: "Staff sign in" }).click();
   await expect(page).toHaveURL(/\/login$/);
 
-  await expect(page.getByRole("link", { name: "Staff", exact: true })).toHaveCount(0);
-  await page.getByRole("link", { name: "Home", exact: true }).click();
+  await page.getByRole("link", { name: "QueueCare home" }).click();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole("link", { name: "Staff", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sign out" })).toHaveCount(0);
 });
 
-test("ST-00.3 staff screens show a Home button in the header", async ({ page }) => {
+test("ST-00.3 staff screens have one header: their screen and Sign out, no sign-in prompt", async ({ page }) => {
   await signIn(page, RECEPTION);
   await expect(page).toHaveURL(/\/reception$/);
-  await expect(page.getByRole("link", { name: "Home", exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Staff", exact: true })).toHaveCount(0);
+  const header = page.getByRole("banner");
+  await expect(header.getByRole("link", { name: "Reception desk" })).toBeVisible();
+  await expect(header.getByRole("button", { name: "Sign out" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Staff sign in" })).toHaveCount(0);
+  // The old second bar is gone: exactly one Sign out button on the page.
+  await expect(page.getByRole("button", { name: "Sign out" })).toHaveCount(1);
+});
+
+test("ST-00.4 signed-in staff on the home page are offered their screen, not sign-in", async ({ page }) => {
+  await signIn(page, DOCTOR);
+  await expect(page).toHaveURL(/\/doctor$/);
+  await page.getByRole("link", { name: "QueueCare home" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("link", { name: "Staff sign in" })).toHaveCount(0);
+  await page.getByRole("banner").getByRole("link", { name: "Doctor's screen" }).click();
+  await expect(page).toHaveURL(/\/doctor$/);
+});
+
+test("ST-00.5 after signing out the header offers sign-in again", async ({ page }) => {
+  await signIn(page, RECEPTION);
+  await expect(page).toHaveURL(/\/reception$/);
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole("link", { name: "Staff sign in" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Reception desk" })).toHaveCount(0);
 });
