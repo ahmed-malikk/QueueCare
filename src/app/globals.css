@@ -132,10 +132,15 @@
     white-space: nowrap;
   }
 
-  /* Each page eases in when it is opened (app/template.tsx). Only opacity and translate, and
-     "none" at the end, so fixed-position screens like /display aren't affected afterwards. */
+  /* Each page eases in when it is opened (app/template.tsx). "backwards" (not "both"): once the
+     animation ends nothing is left on the wrapper. A wrapper that keeps an animated translate
+     becomes the frame for position:fixed children, which squeezed the full-screen waiting-room
+     display into a strip (#38). Full-screen pages skip the animation altogether. */
   .page-enter {
-    animation: page-enter 420ms var(--ease-out-soft) both;
+    animation: page-enter 420ms var(--ease-out-soft) backwards;
+  }
+  .page-enter:has([data-fullscreen]) {
+    animation: none;
   }
 
   /* A paper slip with perforated top and bottom edges (half circles cut out of the paper). */

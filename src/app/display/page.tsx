@@ -18,7 +18,7 @@ export default async function DisplayPage() {
   const view = describeWaitingRoom(data as WaitingRoomResponse);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-auto bg-foreground px-6 py-5 text-white sm:px-12 sm:py-8">
+    <div data-fullscreen className="fixed inset-0 z-50 flex flex-col overflow-auto bg-foreground px-6 py-5 text-white sm:px-12 sm:py-8">
       <header className="flex items-center justify-between gap-4 text-lg text-white/70 sm:text-2xl">
         <span className="inline-flex items-center gap-3">
           <LogoMark className="size-8" /> QueueCare

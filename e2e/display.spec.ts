@@ -13,6 +13,19 @@ test("ST-06.1 the display shows Now serving and the next tokens, with no names",
   expect(await fitsScreen(page), "page must not be wider than the screen").toBe(true);
 });
 
+test("ST-06.3 the display covers the whole window, not just part of the page", async ({ page }) => {
+  await page.goto("/display");
+  await expect(page.getByRole("heading", { name: "Now serving" })).toBeVisible();
+  await page.waitForTimeout(600); // after any page-enter animation would have finished
+  const box = await page.locator("[data-fullscreen]").boundingBox();
+  const size = page.viewportSize()!;
+  expect(box, "the display must exist").not.toBeNull();
+  expect(box!.x).toBe(0);
+  expect(box!.y).toBe(0);
+  expect(box!.width).toBe(size.width);
+  expect(box!.height).toBe(size.height);
+});
+
 test("ST-06.2 calling an emergency ahead of others updates the display live and says priority", async ({
   browser,
 }, info) => {
