@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main className="mx-auto w-full max-w-[80rem] flex-1 px-4 sm:px-6">{children}</main>
         <SiteFooter />
-        <Toaster position="top-center" richColors />
+        <Toaster position="bottom-center" />
       </body>
     </html>
   );

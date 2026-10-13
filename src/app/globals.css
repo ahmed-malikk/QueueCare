@@ -126,7 +126,7 @@
   .token-type {
     font-family: var(--font-manrope);
     font-weight: 400;
-    font-variant-numeric: lining-nums tabular-nums;
+    font-variant-numeric: lining-nums;
     letter-spacing: -0.01em;
     line-height: 0.95;
     white-space: nowrap;

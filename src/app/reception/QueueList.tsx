@@ -41,7 +41,7 @@ export function QueueList({ rows }: { rows: QueueRow<StaffVisit>[] }) {
               <AnimatedItem
                 key={row.visit.id}
                 data-testid={`queue-row-${token}`}
-                className="grid grid-cols-[20px_auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 border-t border-[#e7ede9] bg-card px-1.5 py-3 transition-colors first:border-t-0 hover:bg-[#f6faf6] sm:grid-cols-[28px_78px_minmax(0,1fr)_auto]"
+                className="grid grid-cols-[20px_auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 border-t border-[#e7ede9] bg-card px-1.5 py-3 transition-colors first:border-t-0 hover:bg-[#f6faf6] sm:grid-cols-[28px_minmax(78px,auto)_minmax(0,1fr)_auto]"
               >
                 <span className="text-[13px] text-muted-foreground tabular-nums" aria-label={`Position ${row.position}`}>
                   {row.position}
