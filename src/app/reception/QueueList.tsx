@@ -1,8 +1,10 @@
+import { QrCode } from "lucide-react";
 import { AnimatedItem, AnimatedList } from "@/components/AnimatedList";
 import { CLINIC_TIME_ZONE } from "@/lib/clinicTime";
 import type { StaffVisit } from "@/lib/queueData";
 import type { QueueRow } from "@/lib/queueView";
 import { formatToken } from "@/lib/registration";
+import { QrDialog } from "./QrDialog";
 import { UrgencyControl } from "./UrgencyControl";
 
 const clockTime = new Intl.DateTimeFormat("en-GB", { timeZone: CLINIC_TIME_ZONE, hour: "2-digit", minute: "2-digit" });
@@ -57,6 +59,18 @@ export function QueueList({ rows }: { rows: QueueRow<StaffVisit>[] }) {
                     level={row.level}
                     label={row.label}
                   />
+                  {row.visit.statusPath && (
+                    <QrDialog token={token} statusPath={row.visit.statusPath}>
+                      <button
+                        type="button"
+                        aria-label={`Show QR code for ${token}`}
+                        title="Show QR code"
+                        className="grid size-10 place-items-center rounded-[10px] border-[1.5px] bg-card text-primary transition-[translate,box-shadow,background-color] duration-200 ease-(--ease-out-soft) outline-none hover:-translate-y-0.5 hover:bg-secondary hover:shadow-[0_8px_18px_-10px_rgb(30_59_44/0.55)] focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-0 active:scale-95 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                      >
+                        <QrCode className="size-[18px]" aria-hidden="true" />
+                      </button>
+                    </QrDialog>
+                  )}
                 </div>
               </AnimatedItem>
             );

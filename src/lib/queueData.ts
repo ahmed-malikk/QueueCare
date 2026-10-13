@@ -12,10 +12,12 @@ type VisitRow = {
   kind: "walk_in" | "booked";
   arrived_at: string;
   booked_at: string | null;
+  public_code?: string; // the secret part of the patient's status link (reception only)
 };
 
-/** A waiting visit as staff see it: the priority-queue fields plus the patient's name. */
-export type StaffVisit = QueueVisit & { patientName: string };
+/** A waiting visit as staff see it: the priority-queue fields, the patient's name and, for
+ *  reception, the patient's status page (to show their QR code again). */
+export type StaffVisit = QueueVisit & { patientName: string; statusPath?: string };
 
 /** A database row in the shape the priority queue works with. */
 export function toStaffVisit(row: VisitRow): StaffVisit {
@@ -27,6 +29,7 @@ export function toStaffVisit(row: VisitRow): StaffVisit {
     kind: row.kind,
     arrivedAt: new Date(row.arrived_at),
     bookedAt: row.booked_at ? new Date(row.booked_at) : null,
+    ...(row.public_code ? { statusPath: `/status/${row.public_code}` } : {}),
   };
 }
 
@@ -34,7 +37,7 @@ export function toStaffVisit(row: VisitRow): StaffVisit {
 export async function getWaitingToday(supabase: SupabaseClient, now: Date): Promise<StaffVisit[]> {
   const { data, error } = await supabase
     .from("visits")
-    .select("id, patient_name, token_number, urgency, kind, arrived_at, booked_at")
+    .select("id, patient_name, token_number, urgency, kind, arrived_at, booked_at, public_code")
     .eq("visit_date", clinicDay(now))
     .eq("status", "waiting");
   if (error) throw error;

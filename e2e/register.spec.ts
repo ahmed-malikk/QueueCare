@@ -49,3 +49,20 @@ test("ST-02.3 a booked patient needs a time, and the typed name is kept", async 
 test("ST-02.4 the reception desk fits the screen", async ({ page }) => {
   expect(await fitsScreen(page), "page must not be wider than the screen").toBe(true);
 });
+
+test("ST-02.6 reception can show a waiting patient's QR code again from the queue", async ({ page }) => {
+  await page.getByLabel("Patient name or initials").fill("E2E test patient");
+  await page.getByRole("button", { name: "Register and issue token" }).click();
+  const token = (await page.getByTestId("issued-token").textContent())!.trim();
+
+  await page.getByTestId(`queue-row-${token}`).getByRole("button", { name: `Show QR code for ${token}` }).click();
+  const dialog = page.getByRole("dialog", { name: token });
+  await expect(dialog).toBeVisible();
+  const statusPath = await dialog.getByRole("img", { name: `QR code for token ${token}` }).getAttribute("data-status-path");
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+
+  // The code in the dialog belongs to this patient: it opens their own status page.
+  await page.goto(statusPath!);
+  await expect(page.getByTestId("status-token")).toHaveText(token);
+});
