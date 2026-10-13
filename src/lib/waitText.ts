@@ -9,3 +9,13 @@ export function formatEstimate({ patientsAhead, low, high }: { patientsAhead: nu
   if (low === high) return `About ${low} min`;
   return `About ${low}–${high} min`;
 }
+
+/**
+ * The wait as a short range for the patient's phone ("20–30 min"), without "About": the
+ * label underneath already says it is an expected wait.
+ */
+export function formatRange({ low, high }: { low: number; high: number }) {
+  if (high < 5) return "Under 5 min";
+  if (low === high) return `${low} min`;
+  return `${low}–${high} min`;
+}

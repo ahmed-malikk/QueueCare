@@ -18,7 +18,8 @@ const stripLink =
   "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-semibold text-primary underline decoration-[#9db3a6] underline-offset-[3px] transition-[background-color,translate] duration-200 hover:-translate-y-px hover:bg-card motion-reduce:hover:translate-y-0";
 
 /**
- * Three versions, as in the approved design:
+ * Four versions, as in the approved design:
+ *   - a patient's status page: the logo and Live only
  *   - staff screens: logo | screen name, then Live, (reception) Waiting-room screen, Sign out;
  *     demo accounts also get the shortcuts strip underneath
  *   - the sign-in page: just the logo
@@ -33,6 +34,7 @@ export function HeaderBar({
 }) {
   const pathname = usePathname();
   const onStaffScreen = staff !== null && requiredRole(pathname) === staff.role;
+  const onPatientPage = pathname.startsWith("/status/");
 
   return (
     <header className="sticky top-0 z-40">
@@ -41,7 +43,12 @@ export function HeaderBar({
           <Logo />
         </Link>
 
-        {staff && onStaffScreen ? (
+        {onPatientPage ? (
+          // The patient's phone: just the logo and whether the page is live, as in the design.
+          <div className="ml-auto">
+            <LiveRefresh />
+          </div>
+        ) : staff && onStaffScreen ? (
           <>
             <span className="hidden border-l pl-4 text-sm text-muted-foreground sm:inline">
               {SCREEN_NAMES[staff.role]}

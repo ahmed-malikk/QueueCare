@@ -36,7 +36,7 @@ At small private clinics in Lahore, patients get a paper token but no idea how l
 | US-2 | receptionist | register a patient as walk-in or booked, with an urgency level, and get a token number | I can issue tokens as fast as on paper | Given a name or initials, type and urgency, a sequential token (A-1, A-2…) is created in under 30 seconds on one screen; empty name is rejected | FR-2, NFR-1 |
 | US-3 | receptionist | change a patient's urgency when the doctor asks | urgent cases are seen first without manual reordering | Changing urgency immediately reorders the queue by the rules in §6 on every screen | FR-4, FR-5 |
 | US-4 | doctor | press "Call next" | the right patient comes in and everyone sees it | The highest-priority waiting patient becomes "called"; all open screens update within 2 seconds without refreshing | FR-6, FR-7, NFR-6 |
-| US-5 | patient | open the link or QR code on my token, without signing in | I know my place and roughly how long I'll wait, and can step out | The page shows my token, my place in the queue and an estimated wait as a range; it updates live; it shows no other patient's name; it works at 375 px | FR-3, FR-8, NFR-2, NFR-4 |
+| US-5 | patient | open the link or QR code on my token, without signing in | I know my place and roughly how long I'll wait, and can step out | The page shows my token, my place in the queue and an estimated wait as a range; it says whether I can step out (see step-out advice in §6); when I'm called the whole screen says "Please go in now"; it updates live; it shows no other patient's name; it works at 375 px | FR-3, FR-8, NFR-2, NFR-4 |
 | US-6 | patient in the waiting room | see a "Now serving" screen | I know where the queue is without a phone | The screen shows the current token and the next 3 in very large text; when a patient is called out of normal order it shows "Priority patient called"; no names | FR-9, NFR-3, NFR-4 |
 | US-7 | receptionist | mark a called patient as missed and put them back in the queue | someone who stepped out isn't lost | A missed patient leaves the "now serving" slot and can be re-queued with one action | FR-10 |
 | US-8 | patient | optionally create an account | I can see my visits and bookings | Signing up is never required to use the status link; an account shows only my own visits | FR-11 |
@@ -67,6 +67,8 @@ A Next.js web app on Vercel, with **Supabase** as the backend: a Postgres databa
 4. **Ties** go to whoever has the earlier effective arrival time: fair, first come, first served.
 
 **Estimated wait (a range):** patients ahead × the doctor's average time over the last 5 consultations (10 minutes until there is enough data), shown as 80–125% of that figure and rounded to 5 minutes, e.g. *"about 25–40 min"*. The page notes that urgent arrivals can change it.
+
+**Step-out advice** (added in v1.1, from the interview finding that patients want to step out without missing their turn): with more than **2** patients ahead, the status page says the patient can step out and come back when 2 are ahead; with 1 or 2 ahead, *"Please come back to the waiting room now"*; with nobody ahead, *"You are next"*. The rule is a pure function (`src/lib/stepOut.ts`, unit test UT-24).
 
 **Why it fits:** the rules match what the receptionist and patients described (urgent first, booked counts, fairness, nobody forgotten); the logic is a pure function that can be unit-tested against hand-worked examples; and Realtime replaces the verbal calling and repeated questions.
 

@@ -5,10 +5,10 @@ import { LogoMark } from "@/components/Logo";
 import { requiredRole } from "@/lib/access";
 import { PUBLIC_LINKS } from "@/lib/links";
 
-/** The footer on public pages. Staff screens leave it out, as in the approved design. */
+/** The footer on public pages. Staff screens and patients' status pages leave it out, as in the approved design. */
 export function SiteFooter() {
   const pathname = usePathname();
-  if (requiredRole(pathname) !== null) return null;
+  if (requiredRole(pathname) !== null || pathname.startsWith("/status/")) return null;
 
   return (
     <footer className="mt-auto border-t bg-card">
