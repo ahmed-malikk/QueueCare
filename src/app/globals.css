@@ -53,8 +53,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-public-sans);
-  --font-heading: var(--font-newsreader);
+  --font-sans: var(--font-manrope);
+  --font-heading: var(--font-manrope);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -108,10 +108,11 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-  /* Headings in the serif. Weight 400-500: Newsreader is meant to be set light. */
+  /* Headings: Manrope, set light and large rather than bold. */
   h1,
   h2 {
     font-family: var(--font-heading);
+    font-weight: 400;
     letter-spacing: -0.015em;
   }
   /* A clear keyboard focus ring on links too (shadcn components bring their own). */
@@ -121,9 +122,9 @@
 }
 
 @layer components {
-  /* Token numbers in the serif, so a token reads like a name on a list, not a code. */
+  /* Token numbers: large, light and evenly spaced, so they read at a glance. */
   .token-type {
-    font-family: var(--font-newsreader);
+    font-family: var(--font-manrope);
     font-weight: 400;
     font-variant-numeric: lining-nums tabular-nums;
     letter-spacing: -0.01em;
