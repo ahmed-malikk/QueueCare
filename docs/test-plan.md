@@ -129,7 +129,8 @@ Each case runs on ENV-1, ENV-2 and ENV-3 unless noted. IDs follow the BRD tracea
 | ST-05.1 | US-5 | Patient opens their link in a fresh, signed-out browser | Token and place shown; no patient name anywhere; live connection; no sideways scrolling |
 | ST-05.2 | US-5 | Wrong or shortened link | "We couldn't find this token" |
 | ST-06.1 | US-6 | Waiting-room display | Now serving and Next shown; at most three tokens; no names; live |
-| ST-06.2 | US-6 | An emergency is called ahead of an earlier patient (ENV-2 only, a TV screen) | The display changes without reloading; when it shows that emergency, it says "Priority patient called" |
+| ST-06.2 | US-6 | An emergency is called ahead of an earlier patient (ENV-2 only, a TV screen) | The display changes without reloading; it shows no reason for the call and no names (v1.1: priority banner removed) |
+| ST-06.3 | US-6 | Open the waiting-room screen | The display covers the whole window (regression test for #38) |
 
 ## 9. Non-functional measurements (live site)
 

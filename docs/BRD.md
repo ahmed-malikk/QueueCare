@@ -116,7 +116,7 @@ Priorities use **MoSCoW**: **M**ust have, **S**hould have, **C**ould have, **W**
 | FR-6 | let the doctor call the next patient with one action, choosing the highest-priority patient | BR-3, BR-4 | Must |
 | FR-7 | update the receptionist, doctor, status pages and waiting-room screen automatically when the queue changes | BR-1 | Must |
 | FR-8 | show each waiting patient their token, place in the queue and an **estimated wait as a range**, based on the doctor's recent consultation times | BR-1, BR-2 | Must |
-| FR-9 | show on the waiting-room screen the token now being served and the next few tokens, and **"Priority patient called"** when a patient is called out of normal order | BR-3 | Must |
+| FR-9 | show on the waiting-room screen the token now being served and the next few tokens (v1.1: the "Priority patient called" banner was removed by the product owner; calls out of order are still recorded for reports) | BR-3 | Must |
 | FR-10 | let the receptionist mark a called patient as missed and put them back in the queue | BR-2 | Should |
 | FR-11 | let a patient optionally create an account to see their visits and bookings | BR-2 | Should |
 | FR-12 | record the estimated and actual wait of every visit | BR-5 | Should |
@@ -174,7 +174,7 @@ flowchart LR
 | Change urgency | Receptionist | Raises or lowers a patient's priority on the doctor's instruction |
 | Call next patient | Doctor | One action; QueueCare picks the most urgent, then earliest patient, and every screen updates |
 | Check my place and wait | Patient | Opens the token's link (no sign-in) and sees place in queue and an estimated wait range |
-| Show now serving | Waiting-room screen | Displays the current and next tokens, and "Priority patient called" when the order changes |
+| Show now serving | Waiting-room screen | Displays the current and next tokens |
 
 ## 7. Assumptions and constraints
 

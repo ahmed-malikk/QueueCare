@@ -75,7 +75,7 @@ export function nextPatient(visits: QueueVisit[], now: Date): QueueVisit | null 
   return orderQueue(visits, now)[0] ?? null;
 }
 
-/** True if someone who effectively arrived earlier is still waiting (shown as "Priority patient called"). */
+/** True if someone who effectively arrived earlier is still waiting (recorded as called out of order). */
 export function wasCalledOutOfOrder(called: QueueVisit, stillWaiting: QueueVisit[]): boolean {
   const calledAt = effectiveArrival(called);
   return stillWaiting.some((waiting) => effectiveArrival(waiting) < calledAt);

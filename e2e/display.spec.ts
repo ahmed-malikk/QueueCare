@@ -6,7 +6,7 @@ import { DOCTOR, RECEPTION, fitsScreen, signIn, withWindows } from "./helpers";
 test("ST-06.1 the display shows Now serving and the next tokens, with no names", async ({ page }) => {
   await page.goto("/display");
   await expect(page.getByRole("heading", { name: "Now serving" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /^Next/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Coming up" })).toBeVisible();
   await expect(page.getByTestId("live-status")).toHaveAttribute("data-state", "live");
   await expect(page.getByText("E2E test patient")).toHaveCount(0); // NFR-4
   expect(await page.getByTestId("next-token").count()).toBeLessThanOrEqual(3);
@@ -26,7 +26,7 @@ test("ST-06.3 the display covers the whole window, not just part of the page", a
   expect(box!.height).toBe(size.height);
 });
 
-test("ST-06.2 calling an emergency ahead of others updates the display live and says priority", async ({
+test("ST-06.2 calling the next patient updates the display live, with no reason and no names", async ({
   browser,
 }, info) => {
   test.skip(info.project.name !== "desktop-chrome", "The display is a TV screen; one desktop run is enough");
@@ -58,10 +58,9 @@ test("ST-06.2 calling an emergency ahead of others updates the display live and 
 
     // The display was not touched: it must change by itself.
     await expect(display.getByTestId("now-serving")).not.toHaveText(before);
-    // Whenever it shows our emergency, called ahead of an earlier patient, it must say priority.
-    if ((await display.getByTestId("now-serving").textContent())!.trim() === emergency) {
-      await expect(display.getByTestId("priority-called")).toBeVisible();
-    }
+    // Since v1.1 the screen never says why someone was called first (no priority banner).
+    expect(emergency).toMatch(/^A-\d+$/);
+    await expect(display.getByText(/priority/i)).toHaveCount(0);
     expect(await display.getByText("E2E test patient").count()).toBe(0);
   });
 });

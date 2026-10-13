@@ -6,8 +6,8 @@
  * Rules (from the PRD, US-4):
  *   1. The patient with the doctor (if any) is finished.
  *   2. The highest-priority waiting patient (if any) is called, using the priority queue.
- *   3. If they were called ahead of someone who arrived earlier, that is flagged, so the
- *      waiting-room screen can say "Priority patient called" (no names, no medical details).
+ *   3. If they were called ahead of someone who arrived earlier, that is recorded
+ *      (called_out_of_order), for the clinic's reports.
  */
 import { nextPatient, wasCalledOutOfOrder, type QueueVisit } from "./priorityQueue";
 

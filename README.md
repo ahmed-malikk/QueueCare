@@ -27,7 +27,7 @@ I interviewed a clinic receptionist and three patients in Lahore ([findings](doc
 - **Call next:** the doctor's one button finishes the current patient and calls the right next one
 - **Live on every screen:** reception, doctor, the patient's phone and the waiting-room TV update within about a second, without refreshing
 - **The patient's page, without an app or account:** token, patients ahead and a wait range; no other patient's name is ever shown
-- **Waiting-room display:** "Now serving" and the next three tokens in very large type, with "Priority patient called" when the order changes
+- **Waiting-room display:** "Now serving" and the next three tokens in very large type, readable across the room
 
 | Doctor | Patient's phone | Waiting-room TV |
 |---|---|---|
