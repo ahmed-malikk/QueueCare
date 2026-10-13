@@ -66,3 +66,23 @@ test("ST-02.6 reception can show a waiting patient's QR code again from the queu
   await page.goto(statusPath!);
   await expect(page.getByTestId("status-token")).toHaveText(token);
 });
+
+test("ST-02.7 Print token prints a slip with only the token, wait and QR code", async ({ page }) => {
+  // Record what the print frame would print instead of opening the real print dialog.
+  await page.addInitScript(() => {
+    window.print = function () {
+      (window.top as unknown as { __printed?: string }).__printed = document.body.innerText;
+    };
+  });
+  await page.reload();
+  await page.getByLabel("Patient name or initials").fill("E2E test patient");
+  await page.getByRole("button", { name: "Register and issue token" }).click();
+  const token = (await page.getByTestId("issued-token").textContent())!.trim();
+
+  await page.getByRole("button", { name: "Print token" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __printed?: string }).__printed)).toContain(token);
+  const printed = await page.evaluate(() => (window as unknown as { __printed?: string }).__printed ?? "");
+  expect(printed).toContain("Scan to follow your place in the queue");
+  expect(printed).not.toContain("E2E test patient"); // no names on the slip
+  expect(printed).not.toContain("Today's queue"); // nothing else from the screen
+});

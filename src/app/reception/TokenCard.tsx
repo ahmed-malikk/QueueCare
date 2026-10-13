@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { useOrigin } from "@/lib/useOrigin";
 import { formatEstimate } from "@/lib/waitText";
+import { PrintTokenButton } from "./PrintTokenButton";
 import { QrDialog } from "./QrDialog";
 import type { IssuedToken } from "./actions";
 
@@ -35,6 +36,12 @@ export function TokenCard({ issued }: { issued: IssuedToken }) {
         </a>
         <p className="text-sm font-semibold">{formatEstimate(issued.estimate)}</p>
         <div className="col-span-2 mt-3 flex gap-2">
+          <PrintTokenButton
+            token={issued.token}
+            waitText={formatEstimate(issued.estimate)}
+            statusPath={issued.statusPath}
+            className="h-10 flex-1 font-semibold"
+          />
           <QrDialog token={issued.token} statusPath={issued.statusPath}>
             <Button variant="outline" className="h-10 flex-1 border-[1.5px] border-primary font-semibold text-primary">
               Show QR

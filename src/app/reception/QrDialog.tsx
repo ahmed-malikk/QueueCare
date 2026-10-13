@@ -4,6 +4,7 @@ import { Dialog } from "radix-ui";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { useOrigin } from "@/lib/useOrigin";
+import { PrintTokenButton } from "./PrintTokenButton";
 
 /**
  * A large QR code for one patient's status page, for a patient who lost theirs or wants to scan
@@ -39,6 +40,11 @@ export function QrDialog({
             Ask the patient to scan this to follow the queue on their phone.
           </Dialog.Description>
           <div className="flex gap-2">
+            <PrintTokenButton
+              token={token}
+              statusPath={statusPath}
+              className="h-11 flex-1 border-[1.5px] border-primary bg-card font-semibold text-primary hover:bg-secondary"
+            />
             <Dialog.Close asChild>
               <Button className="h-11 flex-1 font-semibold">Done</Button>
             </Dialog.Close>
