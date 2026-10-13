@@ -20,9 +20,11 @@ test("ST-03.1 raising a patient to Emergency moves them up the queue at once", a
   await expect(row.getByText("Normal", { exact: true }).first()).toBeVisible();
   const positionBefore = Number(await row.getByLabel(/^Position/).textContent());
 
+  const badge = row.getByRole("button", { name: `Urgency for ${token}: Normal. Change` });
   try {
-    await row.getByRole("button", { name: "Emergency" }).click();
-    await expect(row.getByRole("button", { name: "Emergency" })).toHaveAttribute("aria-pressed", "true");
+    await badge.click();
+    await expect(page.getByRole("menuitemradio", { name: "Normal" })).toHaveAttribute("aria-checked", "true");
+    await page.getByRole("menuitemradio", { name: "Emergency" }).click();
     await expect(row.locator('[data-slot="badge"]')).toHaveText("Emergency");
     const positionAfter = Number(await row.getByLabel(/^Position/).textContent());
     expect(positionAfter).toBeLessThanOrEqual(positionBefore);
@@ -30,9 +32,24 @@ test("ST-03.1 raising a patient to Emergency moves them up the queue at once", a
     // move up is only certain when there were more than 3 patients ahead. Ordering itself is UT-18.
     if (positionBefore > 3) expect(positionAfter).toBeLessThan(positionBefore);
   } finally {
-    await row.getByRole("button", { name: "Normal" }).click();
-    await expect(row.getByRole("button", { name: "Normal" })).toHaveAttribute("aria-pressed", "true");
+    await row.locator('[data-slot="badge"]').click();
+    await page.getByRole("menuitemradio", { name: "Normal" }).click();
+    await expect(row.locator('[data-slot="badge"]')).toHaveText("Normal");
   }
+});
+
+test("ST-03.3 the urgency menu works from the keyboard and Escape closes it", async ({ page }) => {
+  await page.getByLabel("Patient name or initials").fill("E2E test patient");
+  await page.getByRole("button", { name: "Register and issue token" }).click();
+  const token = (await page.getByTestId("issued-token").textContent())!.trim();
+  const badge = page.getByTestId(`queue-row-${token}`).locator('[data-slot="badge"]');
+
+  await badge.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("menu")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(badge).toBeFocused(); // focus goes back to the badge
 });
 
 test("ST-03.2 the reception desk with a long queue still fits the screen", async ({ page }) => {

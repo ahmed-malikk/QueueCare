@@ -1,12 +1,9 @@
 import { AnimatedItem, AnimatedList } from "@/components/AnimatedList";
-import { Badge } from "@/components/ui/badge";
 import { CLINIC_TIME_ZONE } from "@/lib/clinicTime";
 import type { StaffVisit } from "@/lib/queueData";
 import type { QueueRow } from "@/lib/queueView";
 import { formatToken } from "@/lib/registration";
 import { UrgencyControl } from "./UrgencyControl";
-
-const BADGE = ["normal", "urgent", "emergency"] as const;
 
 const clockTime = new Intl.DateTimeFormat("en-GB", { timeZone: CLINIC_TIME_ZONE, hour: "2-digit", minute: "2-digit" });
 
@@ -26,7 +23,9 @@ export function QueueList({ rows }: { rows: QueueRow<StaffVisit>[] }) {
         </h2>
         <p className="text-sm text-muted-foreground">{rows.length > 0 && `${rows.length} waiting`}</p>
       </div>
-      <p className="mt-0.5 mb-2 text-sm text-muted-foreground">In the order the doctor will see them.</p>
+      <p className="mt-0.5 mb-2 text-sm text-muted-foreground">
+        In the order the doctor will see them. Tap a patient&apos;s urgency to change it.
+      </p>
 
       {rows.length === 0 ? (
         <p className="px-2.5 py-9 text-center text-muted-foreground">
@@ -51,8 +50,13 @@ export function QueueList({ rows }: { rows: QueueRow<StaffVisit>[] }) {
                   <span className="block text-[13px] text-muted-foreground">{visitLine(row)}</span>
                 </span>
                 <div className="col-span-3 col-start-1 flex items-center justify-end gap-2 sm:col-span-1 sm:col-start-auto">
-                  <Badge variant={BADGE[row.level]}>{row.label}</Badge>
-                  <UrgencyControl visitId={row.visit.id} token={token} urgency={row.visit.urgency} />
+                  <UrgencyControl
+                    visitId={row.visit.id}
+                    token={token}
+                    urgency={row.visit.urgency}
+                    level={row.level}
+                    label={row.label}
+                  />
                 </div>
               </AnimatedItem>
             );
