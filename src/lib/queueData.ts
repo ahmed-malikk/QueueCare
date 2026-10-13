@@ -41,6 +41,22 @@ export async function getWaitingToday(supabase: SupabaseClient, now: Date): Prom
   return (data ?? []).map(toStaffVisit);
 }
 
+/** Today's most recently registered patient (any status): their token and status-page code. */
+export async function getLastRegisteredToday(
+  supabase: SupabaseClient,
+  now: Date,
+): Promise<{ tokenNumber: number; publicCode: string } | null> {
+  const { data, error } = await supabase
+    .from("visits")
+    .select("token_number, public_code")
+    .eq("visit_date", clinicDay(now))
+    .order("token_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? { tokenNumber: data.token_number, publicCode: data.public_code } : null;
+}
+
 /** How long today's most recent consultations took, oldest first (for the wait estimate). */
 export async function getRecentConsultMinutes(supabase: SupabaseClient, now: Date): Promise<number[]> {
   const { data, error } = await supabase

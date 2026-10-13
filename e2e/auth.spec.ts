@@ -58,9 +58,11 @@ test("ST-01.6 the sign-in page fits the screen", async ({ page }) => {
   expect(scroll, "page must not be wider than the screen").toBeLessThanOrEqual(viewport);
 });
 
-test("ST-01.7 the demo buttons fill in a demo login", async ({ page }) => {
+test("ST-01.7 the demo tiles sign in with one click", async ({ page }) => {
   await page.goto("/login");
   await page.getByRole("button", { name: /Try the demo as reception/ }).click();
-  await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/reception$/);
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await page.getByRole("button", { name: /Try the demo as the doctor/ }).click();
+  await expect(page).toHaveURL(/\/doctor$/);
 });
