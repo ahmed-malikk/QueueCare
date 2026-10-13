@@ -24,7 +24,7 @@ test("ST-04.1 Call next brings in a patient and every open screen updates live",
     await expect(doctor.getByTestId("live-status")).toHaveAttribute("data-state", "live");
 
     const pressedAt = Date.now();
-    await doctor.getByRole("button", { name: "Call next" }).click();
+    await doctor.getByRole("button", { name: /^Call A-/ }).click();
     const toast = doctor.getByText(/^A-\d+ called$/);
     await expect(toast).toBeVisible();
     const savedAt = Date.now(); // the doctor sees the call confirmed: the change is in the database

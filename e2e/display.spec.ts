@@ -53,7 +53,7 @@ test("ST-06.2 calling an emergency ahead of others updates the display live and 
 
     await signIn(doctor, DOCTOR);
     await expect(doctor).toHaveURL(/\/doctor$/);
-    await doctor.getByRole("button", { name: "Call next" }).click();
+    await doctor.getByRole("button", { name: /^Call A-/ }).click();
     await expect(doctor.getByText(/^A-\d+ called$/)).toBeVisible();
 
     // The display was not touched: it must change by itself.
