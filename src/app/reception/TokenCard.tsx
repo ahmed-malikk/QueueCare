@@ -1,6 +1,7 @@
 "use client";
 
 import { QRCodeSVG } from "qrcode.react";
+import { useOrigin } from "@/lib/useOrigin";
 import { formatEstimate } from "@/lib/waitText";
 import type { IssuedToken } from "./actions";
 
@@ -10,9 +11,7 @@ import type { IssuedToken } from "./actions";
  * It slides out like a slip leaving a printer.
  */
 export function TokenCard({ issued }: { issued: IssuedToken }) {
-  // Only shown after a registration, so we're in the browser and know the site's own address.
-  // (Never build it from request headers: the browser controls those.)
-  const statusUrl = `${window.location.origin}${issued.statusPath}`;
+  const statusUrl = `${useOrigin()}${issued.statusPath}`;
 
   return (
     <div className="mt-[18px] overflow-hidden">
