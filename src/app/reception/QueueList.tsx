@@ -1,3 +1,4 @@
+import { AnimatedItem, AnimatedList } from "@/components/AnimatedList";
 import { Badge } from "@/components/ui/badge";
 import { CLINIC_TIME_ZONE } from "@/lib/clinicTime";
 import type { StaffVisit } from "@/lib/queueData";
@@ -24,11 +25,11 @@ export function QueueList({ rows }: { rows: QueueRow<StaffVisit>[] }) {
       {rows.length === 0 ? (
         <p className="mt-4 border-y py-8 text-center text-muted-foreground">Registered patients appear here.</p>
       ) : (
-        <ol aria-label="Waiting patients" className="mt-4 divide-y border-y">
+        <AnimatedList aria-label="Waiting patients" className="mt-4 divide-y border-y">
           {rows.map((row) => {
             const token = formatToken(row.visit.tokenNumber);
             return (
-              <li
+              <AnimatedItem
                 key={row.visit.id}
                 data-testid={`queue-row-${token}`}
                 className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3"
@@ -46,10 +47,10 @@ export function QueueList({ rows }: { rows: QueueRow<StaffVisit>[] }) {
                 </div>
                 <Badge variant={BADGE[row.level]}>{row.label}</Badge>
                 <UrgencyControl visitId={row.visit.id} token={token} urgency={row.visit.urgency} />
-              </li>
+              </AnimatedItem>
             );
           })}
-        </ol>
+        </AnimatedList>
       )}
     </section>
   );

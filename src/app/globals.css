@@ -3,51 +3,58 @@
 @import "shadcn/tailwind.css";
 
 /*
- * QueueCare theme: calm and clinical.
- * Teal is the brand colour. Amber (Urgent) and red (Emergency) are kept for urgency only,
- * so they stand out when they appear. Every text colour passes WCAG AA contrast on white.
+ * QueueCare theme v2: calm clinic. Deep forest green for actions and type, sage and mist for
+ * large calm surfaces, warm off-white paper behind everything. Amber (Urgent) and red
+ * (Emergency) are kept for urgency only, so they stand out when they appear.
+ * Every text colour passes WCAG AA contrast on its background.
  * shadcn/ui components read these variables (bg-primary, text-muted-foreground, ...).
  */
 :root {
   color-scheme: light;
-  --radius: 0.5rem;
+  --radius: 0.75rem;
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 
-  --background: oklch(0.985 0.004 197);      /* cool off-white page */
-  --foreground: oklch(0.24 0.025 215);       /* deep blue-grey text */
-  --card: oklch(1 0 0);
+  --background: #f8faf7;                     /* paper */
+  --foreground: #16201a;                     /* ink */
+  --card: #ffffff;
   --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
+  --popover: #ffffff;
   --popover-foreground: var(--foreground);
 
-  --primary: oklch(0.511 0.096 186.4);       /* teal #0f766e */
-  --primary-foreground: oklch(0.985 0.01 185);
-  --secondary: oklch(0.955 0.025 185);       /* pale teal */
-  --secondary-foreground: oklch(0.38 0.07 187);
-  --muted: oklch(0.955 0.006 200);
-  --muted-foreground: oklch(0.5 0.022 215);
-  --accent: oklch(0.955 0.025 185);
-  --accent-foreground: oklch(0.38 0.07 187);
+  --primary: #1e3b2c;                        /* forest */
+  --primary-foreground: #ffffff;
+  --primary-hover: #2b5240;
+  --secondary: #e3eee5;                      /* soft sage */
+  --secondary-foreground: #1e3b2c;
+  --muted: #eef3ef;
+  --muted-foreground: #55645b;
+  --accent: #e3eee5;
+  --accent-foreground: #1e3b2c;
 
-  --destructive: oklch(0.505 0.213 27.5);
-  --border: oklch(0.915 0.01 200);
-  --input: oklch(0.88 0.012 200);
-  --ring: oklch(0.6 0.1 186);
+  --destructive: #b42318;
+  --border: #d3ddd6;
+  --input: #c5d2cb;
+  --ring: #2b5240;
+
+  /* Large calm surfaces (hero blocks, "with you now" card) */
+  --sage: #bcd6c1;
+  --mist: #d3dfe3;
 
   /* Queue urgency */
-  --urgent: oklch(0.555 0.163 49);           /* amber-700 */
-  --urgent-soft: oklch(0.987 0.022 95);
-  --emergency: oklch(0.505 0.213 27.5);      /* red-700 */
-  --emergency-soft: oklch(0.971 0.013 17);
-  --success: oklch(0.527 0.137 150);
+  --urgent: #8a5200;
+  --urgent-soft: #fff1d6;
+  --emergency: #b42318;
+  --emergency-soft: #fdecea;
+  --success: #1f7a4a;
 
-  /* The token slip: the paper token clinics hand out, and the one bold element in the design. */
-  --slip: oklch(0.955 0.022 172);             /* pale mint slip */
-  --slip-edge: oklch(0.86 0.04 175);
+  /* The token slip */
+  --slip: #f8faf7;
+  --slip-edge: #afc2b5;
 }
 
 @theme inline {
-  --font-sans: var(--font-archivo);
-  --font-heading: var(--font-archivo);
+  --font-sans: var(--font-public-sans);
+  --font-heading: var(--font-newsreader);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -72,6 +79,9 @@
   --color-emergency: var(--emergency);
   --color-emergency-soft: var(--emergency-soft);
   --color-success: var(--success);
+  --color-primary-hover: var(--primary-hover);
+  --color-sage: var(--sage);
+  --color-mist: var(--mist);
   --color-slip: var(--slip);
   --color-slip-edge: var(--slip-edge);
 
@@ -98,6 +108,12 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  /* Headings in the serif. Weight 400-500: Newsreader is meant to be set light. */
+  h1,
+  h2 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.015em;
+  }
   /* A clear keyboard focus ring on links too (shadcn components bring their own). */
   a:focus-visible {
     @apply rounded-sm outline-2 outline-offset-2 outline-ring;
@@ -105,14 +121,20 @@
 }
 
 @layer components {
-  /* Token numbers, set like a token machine prints them: extra-condensed and heavy. */
+  /* Token numbers in the serif, so a token reads like a name on a list, not a code. */
   .token-type {
-    font-family: var(--font-archivo);
-    font-stretch: 62%;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
+    font-family: var(--font-newsreader);
+    font-weight: 400;
+    font-variant-numeric: lining-nums tabular-nums;
     letter-spacing: -0.01em;
-    line-height: 0.9;
+    line-height: 0.95;
+    white-space: nowrap;
+  }
+
+  /* Each page eases in when it is opened (app/template.tsx). Only opacity and translate, and
+     "none" at the end, so fixed-position screens like /display aren't affected afterwards. */
+  .page-enter {
+    animation: page-enter 420ms var(--ease-out-soft) both;
   }
 
   /* A paper slip with perforated top and bottom edges (half circles cut out of the paper). */
@@ -130,7 +152,7 @@
       radial-gradient(circle at 50% 100%, transparent var(--hole), #000 calc(var(--hole) + 0.5px)) bottom / 16px 51% repeat-x;
   }
 
-  /* The only animation: a new token slides out, like a slip leaving the printer. */
+  /* A new token slides out, like a slip leaving the printer. */
   .slip-print {
     animation: slip-print 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
@@ -141,6 +163,12 @@
   to { transform: translateY(0); clip-path: inset(0 0 0 0); }
 }
 
+@keyframes page-enter {
+  from { opacity: 0; translate: 0 12px; }
+  to { opacity: 1; translate: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .slip-print { animation: none; }
+  .slip-print,
+  .page-enter { animation: none; }
 }

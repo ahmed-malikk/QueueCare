@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AnimatedItem, AnimatedList } from "@/components/AnimatedList";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { Badge } from "@/components/ui/badge";
 import { TokenSlip } from "@/components/TokenSlip";
@@ -70,9 +71,9 @@ export default async function DoctorPage() {
             </p>
           </div>
           {rows.length > 0 && (
-            <ol aria-label="Next patients" className="mt-4 divide-y border-y">
+            <AnimatedList aria-label="Next patients" className="mt-4 divide-y border-y">
               {rows.slice(0, NEXT_UP).map((row) => (
-                <li key={row.visit.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
+                <AnimatedItem key={row.visit.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
                   <span className="w-4 text-sm text-muted-foreground tabular-nums">{row.position}</span>
                   <span className="token-type w-16 text-3xl">{formatToken(row.visit.tokenNumber)}</span>
                   <span className="min-w-0 flex-1 truncate font-medium">{row.visit.patientName}</span>
@@ -80,9 +81,9 @@ export default async function DoctorPage() {
                   <span className="w-20 text-right text-sm text-muted-foreground tabular-nums">
                     {row.waitedMinutes} min
                   </span>
-                </li>
+                </AnimatedItem>
               ))}
-            </ol>
+            </AnimatedList>
           )}
         </section>
       </div>
