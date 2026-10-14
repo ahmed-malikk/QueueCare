@@ -170,3 +170,23 @@
   .slip-print,
   .page-enter { animation: none; }
 }
+
+/* "Print token" (PrintTokenButton): the slip is hidden on screen. While printing, only the slip
+   is shown, as a receipt 72 mm wide. */
+.print-slip { display: none; }
+@media print {
+  @page { size: 72mm auto; margin: 4mm; }
+  body > *:not([data-printing]) { display: none !important; }
+  body > [data-printing] {
+    display: block !important;
+    text-align: center;
+    color: #000;
+    font-family: system-ui, sans-serif;
+  }
+  [data-printing] .name { font-size: 11pt; }
+  [data-printing] .token { font-size: 48pt; line-height: 1; margin: 2mm 0; font-weight: 400; }
+  [data-printing] .wait { font-size: 12pt; font-weight: 600; margin-bottom: 3mm; }
+  [data-printing] svg { width: 38mm; height: 38mm; margin: 0 auto; display: block; }
+  [data-printing] .hint,
+  [data-printing] .time { font-size: 9pt; margin-top: 2mm; }
+}

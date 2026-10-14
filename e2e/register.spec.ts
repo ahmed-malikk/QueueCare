@@ -68,10 +68,12 @@ test("ST-02.6 reception can show a waiting patient's QR code again from the queu
 });
 
 test("ST-02.7 Print token prints a slip with only the token, wait and QR code", async ({ page }) => {
-  // Record what the print frame would print instead of opening the real print dialog.
+  // Don't open the real print dialog; count the calls instead. The page itself must be the one
+  // that prints, straight from the tap (a hidden frame is blocked on phones, #44).
   await page.addInitScript(() => {
-    window.print = function () {
-      (window.top as unknown as { __printed?: string }).__printed = document.body.innerText;
+    (window as unknown as { __prints: number }).__prints = 0;
+    window.print = () => {
+      (window as unknown as { __prints: number }).__prints++;
     };
   });
   await page.reload();
@@ -79,10 +81,20 @@ test("ST-02.7 Print token prints a slip with only the token, wait and QR code", 
   await page.getByRole("button", { name: "Register and issue token" }).click();
   const token = (await page.getByTestId("issued-token").textContent())!.trim();
 
-  await page.getByRole("button", { name: "Print token" }).click();
-  await expect.poll(() => page.evaluate(() => (window as unknown as { __printed?: string }).__printed)).toContain(token);
-  const printed = await page.evaluate(() => (window as unknown as { __printed?: string }).__printed ?? "");
+  await page.getByRole("button", { name: "Print token" }).first().click();
+  expect(await page.evaluate(() => (window as unknown as { __prints: number }).__prints)).toBe(1);
+
+  // What the printer gets: the page as it looks in print media.
+  await page.emulateMedia({ media: "print" });
+  const slip = page.locator("[data-printing]");
+  await expect(slip).toBeVisible();
+  const printed = await slip.innerText();
+  expect(printed).toContain(token);
   expect(printed).toContain("Scan to follow your place in the queue");
+  expect(await slip.locator("svg").count()).toBe(1); // the QR code
   expect(printed).not.toContain("E2E test patient"); // no names on the slip
-  expect(printed).not.toContain("Today's queue"); // nothing else from the screen
+  await expect(page.getByText("Today's queue")).toBeHidden(); // nothing else from the screen
+  await expect(page.getByRole("button", { name: "Register and issue token" })).toBeHidden();
+  const width = await slip.evaluate((el) => el.getBoundingClientRect().width);
+  expect(width).toBeGreaterThan(0);
 });
