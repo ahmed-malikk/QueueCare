@@ -73,9 +73,11 @@ test("ST-00.6 Try the live demo signs in as reception in one click", async ({ pa
   await expect(page).toHaveURL(/\/reception$/);
 });
 
-test("ST-00.7 the menu links lead to sections that exist", async ({ page }) => {
+test("ST-00.7 the menu has only links that go somewhere useful", async ({ page }) => {
   await page.goto("/");
-  for (const id of ["how", "order", "results"]) {
-    await expect(page.locator(`#${id}`)).toHaveCount(1);
+  const menu = page.getByRole("navigation", { name: "Main" });
+  for (const name of ["How it works", "Queue rules", "Results"]) {
+    await expect(menu.getByRole("link", { name })).toHaveCount(0);
   }
+  await expect(page.getByRole("link", { name: "How this was built" }).first()).toHaveAttribute("href", /github\.com/);
 });
