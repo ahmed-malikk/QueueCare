@@ -81,3 +81,15 @@ test("ST-00.7 the menu has only links that go somewhere useful", async ({ page }
   }
   await expect(page.getByRole("link", { name: "How this was built" }).first()).toHaveAttribute("href", /github\.com/);
 });
+
+test("ST-00.8 rows in the home animation stay on one line, even with an Emergency tag", async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto("/");
+  await expect(page.locator('[data-id="queue"] [data-token="A-15"]')).toBeVisible({ timeout: 40_000 });
+  await page.waitForTimeout(1500); // let the row finish gliding into place
+  const heights = await page
+    .locator('[data-id="queue"] li')
+    .evaluateAll((rows) => rows.map((row) => Math.round(row.getBoundingClientRect().height)));
+  // One line is about 37 px; a wrapped "Walk-in" made the row about 55 px.
+  for (const height of heights) expect(height).toBeLessThan(45);
+});

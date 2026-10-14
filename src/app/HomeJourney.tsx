@@ -25,8 +25,8 @@ const TAG = [
 
 function rowHtml(row: Row, fresh = false) {
   return `<li data-token="${row.token}" class="grid grid-cols-[48px_1fr_auto] items-center gap-2 border-t border-[#eef2ef] bg-card px-1.5 py-2 text-[12.5px] first:border-t-0${fresh ? " fresh" : ""}">
-    <b class="token-type text-[19px] font-normal text-primary">${row.token}</b><span>${row.info}</span>
-    <span class="rounded-full px-2 py-0.5 text-xs font-semibold ${TAG[row.level]}">${row.label}</span></li>`;
+    <b class="token-type text-[19px] font-normal text-primary">${row.token}</b><span class="whitespace-nowrap">${row.info}</span>
+    <span class="whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${TAG[row.level]}">${row.label}</span></li>`;
 }
 
 export function HomeJourney() {
