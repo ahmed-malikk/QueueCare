@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeftRight, ExternalLink, Monitor } from "lucide-react";
+import { ArrowLeft, ArrowLeftRight, ExternalLink, Monitor } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ const stripLink =
  *   - a patient's status page: the logo and Live only
  *   - staff screens: logo | screen name, then Live, (reception) Waiting-room screen, Sign out;
  *     demo accounts also get the shortcuts strip underneath
- *   - the sign-in page: just the logo
+ *   - the sign-in page: the logo and Back to home
  *   - everywhere else: logo, public links, and Staff sign in (or, for signed-in staff, their screen)
  */
 export function HeaderBar({
@@ -69,7 +69,14 @@ export function HeaderBar({
               </form>
             </nav>
           </>
-        ) : pathname === LOGIN_PATH ? null : (
+        ) : pathname === LOGIN_PATH ? (
+          // A clear way back for anyone who opened sign-in by mistake (#39).
+          <Button asChild variant="outline" className="ml-auto h-11 border-primary px-4 font-semibold text-primary">
+            <Link href="/">
+              <ArrowLeft /> Back to home
+            </Link>
+          </Button>
+        ) : (
           <nav aria-label="Main" className="ml-auto flex items-center gap-6">
             <ul className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
               {PUBLIC_LINKS.map((link) => (

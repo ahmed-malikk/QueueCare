@@ -20,10 +20,14 @@ test("ST-00.1 the browser tab icon is the QueueCare logo", async ({ request }) =
   expect(icon.headers()["content-type"]).toContain("svg");
 });
 
-test("ST-00.2 visitors see Staff sign in, and the logo leads home", async ({ page }) => {
+test("ST-00.2 visitors see Staff sign in, and sign-in has a clear way back", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Staff sign in" }).click();
   await expect(page).toHaveURL(/\/login$/);
+  await page.getByRole("link", { name: "Back to home" }).click();
+  await expect(page).toHaveURL(/\/$/);
+
+  await page.goto("/login");
 
   await page.getByRole("link", { name: "QueueCare home" }).click();
   await expect(page).toHaveURL(/\/$/);
