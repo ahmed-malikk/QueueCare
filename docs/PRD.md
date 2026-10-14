@@ -1,6 +1,6 @@
 # PRD: QueueCare
 
-**Author:** Ahmed Malik · **Date:** 7 October 2026 · **Status:** v1.0 released 9 October 2026 (the six Must stories, US-1 to US-6; US-7 to US-9 are in the backlog) · **Related:** [BRD](BRD.md) · [interview findings](research/interview-findings.md)
+**Author:** Ahmed Malik · **Date:** 7 October 2026 · **Status:** v1.1 released 14 October 2026 (redesign of every screen, step-out advice; v1.0 on 9 October delivered the six Must stories, US-1 to US-6; US-7 to US-9 are in the backlog) · **Related:** [BRD](BRD.md) · [interview findings](research/interview-findings.md)
 
 ## 1. Problem
 

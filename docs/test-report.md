@@ -1,7 +1,50 @@
-# Test Report: QueueCare v1.0
+# Test Report: QueueCare v1.1
 
-**Author:** Ahmed Malik · **Date:** 2026-10-09 · **Build tested:** `17818fb` (local production build and the live site)
-**Related:** [Test plan](test-plan.md) · [PRD](PRD.md) · Issue [#13](https://github.com/ahmed-malikk/QueueCare/issues/13)
+**Author:** Ahmed Malik · **Date:** 2026-10-14 · **Build tested:** `0aca47a` (local production build and the live site)
+**Related:** [Test plan](test-plan.md) · [PRD](PRD.md) · Redesign issues [#18](https://github.com/ahmed-malikk/QueueCare/issues/18), [#26](https://github.com/ahmed-malikk/QueueCare/issues/26)–[#36](https://github.com/ahmed-malikk/QueueCare/issues/36)
+
+## v1.1: redesign of every screen
+
+### Summary
+
+| Level | Result |
+|---|---|
+| Unit tests (Vitest) | **86 / 86 passed** (new: UT-23 demo accounts, UT-24 step-out advice, UT-16.1 wait range) |
+| Security checks | **16 / 16 passed** |
+| System tests, local production build | **98 passed, 4 skipped by design** (ST-06.2 runs on desktop Chrome only, ST-05.3 on the phone view only) |
+| System tests, live site | **98 passed, 4 skipped by design** |
+| CI (typecheck, unit tests, build) | Passing on every push |
+
+New system tests: ST-00.2 to ST-00.7 (header for visitors and staff, one-click demo, menu links), ST-02.6 (show a patient's QR code again), ST-02.7 (the printed slip holds only the token, wait and QR code, no names), ST-03.3 (urgency menu from the keyboard), ST-05.3 (the whole phone screen says Please go in now), ST-06.3 (the waiting-room screen covers the whole window), ST-08.1 and ST-08.2 (demo shortcuts).
+
+### Non-functional results (live site)
+
+| ID | Target | Measured | Result |
+|---|---|---|---|
+| NFR-6 | Other open screens update within 2 s | **0.8 s (Edge), 1.4 s (Chrome), 1.4 s (phone view)** after the change is saved; 1.3–1.9 s after the doctor's click | Pass, but slower than v1.0 (0.8–0.9 s); see Outstanding |
+| NFR-2 | Patient page loads in under 3 s on mobile data | Three cold loads at 375 px, throttled to 1.6 Mbps down, 750 kbps up, 150 ms extra latency: token visible after **0.53–0.72 s**, page fully loaded after **2.20–2.31 s** | Pass |
+| NFR-4 | No names or medical details on public pages | ST-05.1, ST-06.1 and ST-06.2 find no names; the printed slip has no name (ST-02.7); the waiting-room screen no longer shows any reason for a call | Pass |
+| NFR-5 | Roles enforced by the database | 16 / 16 security checks | Pass |
+
+### Defects found in v1.1
+
+| ID | Defect | Severity | Found by | Fix |
+|---|---|---|---|---|
+| D-08 | If the register form was sent before the page's JavaScript loaded, the server rendered the token card and crashed on `window` | Medium | Server log during a system test run ([#37](https://github.com/ahmed-malikk/QueueCare/issues/37)); present since v1.0 | `750950c`: the QR link is built with `useOrigin()` |
+| D-09 | The waiting-room screen was squeezed into a strip about 64 px tall: the new page-enter animation made the page wrapper the frame for the screen's fixed panel | High | The product owner, reviewing the app ([#38](https://github.com/ahmed-malikk/QueueCare/issues/38)); the tests checked the text existed, not that it filled the screen | `18ca065`: the animation leaves nothing behind; full-screen pages skip it; new test ST-06.3 measures it |
+
+### Outstanding
+
+| Item | Status |
+|---|---|
+| Live updates in Chrome and on the phone view took 1.4 s (v1.0: 0.9 s) | Within the 2 s target. Possible cause, not yet confirmed: the header now reads from the database on every refresh |
+| The token slip says "About 0–5 min" where the phone says "Under 5 min" | Wording only; to be made consistent |
+| Printing on a real printer | The printed content is tested (ST-02.7); the browser's print dialog was not tested on a printer |
+| MT-01, MT-02 (real phone), Safari and Firefox | As in v1.0 below |
+
+---
+
+# v1.0 results (9 October 2026)
 
 ## 1. Summary
 

@@ -6,9 +6,9 @@
 
 **Live:** [queuecare-zeta.vercel.app](https://queuecare-zeta.vercel.app) · **PRD:** [docs/PRD.md](docs/PRD.md) · **BRD:** [docs/BRD.md](docs/BRD.md) · **Tests:** [plan](docs/test-plan.md) · [report](docs/test-report.md) · **Pilot:** [plan](docs/pilot-plan.md) · **Lessons:** [lessons learned](docs/lessons-learned.md) · **Board:** [project](https://github.com/users/ahmed-malikk/projects/1)
 
-![The reception desk: a registration form, the token just issued as a slip with its QR code, and today's queue in priority order (demo data)](docs/screenshots/reception.png)
+![The reception desk: who is with the doctor, a registration form with the token just issued and its QR code, and today's queue in priority order (demo data)](docs/screenshots/reception.png)
 
-**Try it in a minute (demo data, public accounts):** open the live site, press **Staff**, then **Try as Reception** and **Sign in**. Register a patient and scan the QR code with your phone. In a second window, sign in with **Try as Doctor** and press **Call next**; the reception screen, the patient's phone and the [waiting-room display](https://queuecare-zeta.vercel.app/display) all change by themselves.
+**Try it in a minute (demo data, public accounts):** open the live site and press **Try the live demo**; one click signs you in as reception. Register a patient and scan the QR code with your phone, or use the demo strip to open the patient's phone page and the [waiting-room display](https://queuecare-zeta.vercel.app/display) in new tabs. Then press **Switch to the doctor** and call the next patient: every open screen changes by itself.
 
 | Login | Email | Password |
 |---|---|---|
@@ -22,16 +22,16 @@ I interviewed a clinic receptionist and three patients in Lahore ([findings](doc
 ## Features
 
 - **Staff sign-in with roles:** reception and the doctor each see only their own screen
-- **Register a patient in a few taps:** walk-in or booked, Normal, Urgent or Emergency; the next token is issued with a wait estimate and a QR code
-- **A fair priority queue:** urgent first, waiting time moves everyone up, bookings are kept; reception can change urgency with one tap
-- **Call next:** the doctor's one button finishes the current patient and calls the right next one
+- **Register a patient in a few taps:** walk-in or booked, Normal, Urgent or Emergency; the next token is issued with a wait estimate and a QR code, and can be **printed** as a receipt-sized slip
+- **A fair priority queue:** urgent first, waiting time moves everyone up, bookings are kept; reception changes urgency from a badge on each patient, and can **show a patient's QR code again** if they lost it
+- **Call next:** the doctor's button says exactly who it will call and who it will mark finished
 - **Live on every screen:** reception, doctor, the patient's phone and the waiting-room TV update within about a second, without refreshing
-- **The patient's page, without an app or account:** token, patients ahead and a wait range; no other patient's name is ever shown
+- **The patient's page, without an app or account:** token, patients ahead, a wait range and whether it is safe to step out (come back when 2 patients are ahead); when called, the whole screen says **Please go in now**; no other patient's name is ever shown
 - **Waiting-room display:** "Now serving" and the next three tokens in very large type, readable across the room
 
 | Doctor | Patient's phone | Waiting-room TV |
 |---|---|---|
-| ![The doctor's screen: the patient with the doctor as a token slip, a Call next button and the next patients](docs/screenshots/doctor.png) | ![A patient's status page on a phone: token A-201, 2 patients ahead, about 10–15 minutes, and the token now with the doctor](docs/screenshots/patient-phone.png) | ![The waiting-room display: now serving A-200, "Priority patient called", and the next three tokens](docs/screenshots/waiting-room.png) |
+| ![The doctor's screen: the patient with the doctor, a button that says Call A-263 and that A-264 will be marked finished, and the next patients](docs/screenshots/doctor.png) | ![A patient's status page on a phone: token A-267, 3 patients ahead, the expected wait, and advice that they can step out until 2 are ahead](docs/screenshots/patient-phone.png) | ![The waiting-room display: now serving A-264 in very large type and the next three tokens in tiles](docs/screenshots/waiting-room.png) |
 
 ## Tech stack
 
@@ -87,21 +87,22 @@ The queue is a **priority queue** ordered by three rules, applied in turn:
 
 | Decision | Why | Trade-off |
 |---|---|---|
-| Rules as pure functions in `src/lib` | Fast, exact unit tests (77) and one source of truth for every screen | The server reads the queue before deciding, so two simultaneous registrations can both count the same people ahead (only the estimate is affected; token numbers are protected by a database lock) |
+| Rules as pure functions in `src/lib` | Fast, exact unit tests (86) and one source of truth for every screen | The server reads the queue before deciding, so two simultaneous registrations can both count the same people ahead (only the estimate is affected; token numbers are protected by a database lock) |
 | Row-level security as the security boundary | A missing check in a page can't leak data; proved by a script that acts as each role (16 checks) | Rules live in SQL migrations as well as in the app |
 | Public pages read through two database functions | Patients don't sign in, and no secret key is needed in the app; the functions return only what a patient or the waiting room may see | The waiting-room order is computed in SQL too, so a check compares it with the TypeScript rules on a real mix of patients |
 | Live updates through a one-row `queue_ticks` signal | Public screens can listen without seeing any visit data; each screen re-loads through the normal permission checks | One extra round trip per change; a 30-second safety refresh covers missed messages |
 | Visits are never deleted | Estimated vs actual waits can be measured in the pilot | Test data has to be tidied (marked "missed"), not removed |
 | Server code in Vercel's Mumbai region | The database is in Mumbai; every page makes several round trips | Measured: live updates went from 0.9–2.7 s (local) to 0.8–0.9 s |
-| A look based on the paper token slip | Familiar to clinic staff and patients; readable from across a waiting room | One bold element, everything else kept plain |
+| A calm-clinic design system (v1.1): Manrope, forest and sage, motion that explains what changed | Designed and approved as a clickable prototype before any code; every screen was then built to match it | Animations are switched off for people who ask for reduced motion, and kept short so a busy receptionist never waits on them |
 
 ## How I ran it as a project
 
 - **Interviews before code:** one receptionist and three patients on 7 October 2026, then a [BRD](docs/BRD.md) (as-is and to-be processes, 27 requirements (5 business, 15 functional, 7 non-functional) with MoSCoW priorities, use cases, traceability) and a [PRD](docs/PRD.md) (user stories, success metrics, priority and estimate rules)
-- **24 issues** on a [GitHub Project board](https://github.com/users/ahmed-malikk/projects/1), one commit per issue, conventional commit messages, CI on every push
+- **38 issues** on a [GitHub Project board](https://github.com/users/ahmed-malikk/projects/1), one commit per issue, conventional commit messages, CI on every push
 - **A code review** before committing the registration feature found 7 issues, including one no test had caught (a failed registration left the previous patient's QR code on screen); all were fixed before commit
-- **Testing:** a [test plan](docs/test-plan.md) and [test report](docs/test-report.md); seven defects found and fixed, each traced to an issue
-- **Releases:** v1.0
+- **Testing:** a [test plan](docs/test-plan.md) and [test report](docs/test-report.md); nine defects found and fixed, each traced to an issue
+- **Redesign (v1.1):** a workflow review of every screen, a clickable prototype approved before building, then one issue and one commit per screen
+- **Releases:** v1.0, v1.1
 
 ## Results
 
@@ -109,11 +110,11 @@ Measured, not estimated. QueueCare has not yet been used by a real clinic, so th
 
 | What | Result |
 |---|---|
-| Unit tests | 77 / 77 pass |
+| Unit tests | 86 / 86 pass |
 | Security checks (each role, plus public functions) | 16 / 16 pass |
-| System tests, Edge, Chrome and a 375 px phone view, on the live site | 67 pass (2 skipped by design) |
-| Live update to another open screen (target: 2 s) | **0.8–0.9 s** after the change is saved, on the live site |
-| Patient page on throttled mobile data (target: 3 s) | Token visible after **0.5 s**, page fully loaded after **2.3 s** |
+| System tests, Edge, Chrome and a 375 px phone view, on the live site | 98 pass (4 skipped by design) |
+| Live update to another open screen (target: 2 s) | **0.8–1.4 s** after the change is saved, on the live site (v1.1) |
+| Patient page on throttled mobile data (target: 3 s) | Token visible after **0.5–0.7 s**, page fully loaded after **2.2–2.3 s** (v1.1) |
 | Public pages | No names and no urgency in anything the public can read |
 
 ## What I'd do next
@@ -121,7 +122,8 @@ Measured, not estimated. QueueCare has not yet been used by a real clinic, so th
 - Run the [pilot](docs/pilot-plan.md) at a small clinic and measure estimate accuracy (target: 70% of real waits inside the range)
 - Mark a called patient as missed and re-queue them ([#10](https://github.com/ahmed-malikk/QueueCare/issues/10))
 - Show estimated vs actual waits to the clinic ([#12](https://github.com/ahmed-malikk/QueueCare/issues/12)), and an optional patient account ([#11](https://github.com/ahmed-malikk/QueueCare/issues/11))
-- Print the token with its QR code, for patients who'd rather not scan a screen
+- Bring live updates back under 1 second on every browser: v1.1 measured 1.4 s in Chrome (v1.0: 0.9 s), possibly because the new header reads from the database on every refresh
+- Say "Under 5 min" consistently when an estimate starts at 0 (the token slip currently says "About 0–5 min")
 
 ## Run locally
 
