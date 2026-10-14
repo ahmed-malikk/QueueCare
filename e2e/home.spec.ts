@@ -3,7 +3,7 @@ import { DOCTOR, RECEPTION, signIn } from "./helpers";
 
 test("ST-00 home page loads, shows the logo and fits the screen", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("The paper token");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Keep the paper token");
   await expect(page.getByRole("link", { name: "QueueCare home" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "How the order is decided" })).toBeVisible();
 
@@ -61,4 +61,17 @@ test("ST-00.5 after signing out the header offers sign-in again", async ({ page 
   await expect(page.getByRole("button", { name: "Sign out" })).toHaveCount(0);
   await page.getByRole("link", { name: "QueueCare home" }).click();
   await expect(page.getByRole("link", { name: "Staff sign in" })).toBeVisible();
+});
+
+test("ST-00.6 Try the live demo signs in as reception in one click", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Try the live demo/ }).click();
+  await expect(page).toHaveURL(/\/reception$/);
+});
+
+test("ST-00.7 the menu links lead to sections that exist", async ({ page }) => {
+  await page.goto("/");
+  for (const id of ["how", "order", "results"]) {
+    await expect(page.locator(`#${id}`)).toHaveCount(1);
+  }
 });

@@ -144,6 +144,11 @@ Measured, not estimated. QueueCare has not yet been used by a real clinic, so th
    npm run test:e2e          # system tests on the production build
    ```
 
+## Credits
+
+- Waiting-room photo on the home page: [Adhitya Sibikumar on Unsplash](https://unsplash.com/@adhityasibikumar), used under the [Unsplash License](https://unsplash.com/license).
+- Type: [Manrope](https://fonts.google.com/specimen/Manrope) (SIL Open Font License).
+
 ## Author
 
 **Ahmed Malik** · Part of my portfolio covering software development, business analysis and product management.

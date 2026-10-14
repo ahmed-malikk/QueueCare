@@ -143,21 +143,6 @@
     animation: none;
   }
 
-  /* A paper slip with perforated top and bottom edges (half circles cut out of the paper). */
-  .slip {
-    --hole: 5px;
-    position: relative;
-    background: var(--slip);
-    border-inline: 1px solid var(--slip-edge);
-    border-radius: 2px;
-    -webkit-mask:
-      radial-gradient(circle at 50% 0, transparent var(--hole), #000 calc(var(--hole) + 0.5px)) top / 16px 51% repeat-x,
-      radial-gradient(circle at 50% 100%, transparent var(--hole), #000 calc(var(--hole) + 0.5px)) bottom / 16px 51% repeat-x;
-    mask:
-      radial-gradient(circle at 50% 0, transparent var(--hole), #000 calc(var(--hole) + 0.5px)) top / 16px 51% repeat-x,
-      radial-gradient(circle at 50% 100%, transparent var(--hole), #000 calc(var(--hole) + 0.5px)) bottom / 16px 51% repeat-x;
-  }
-
   /* A new token slides out, like a slip leaving the printer. */
   .slip-print {
     animation: slip-print 650ms var(--ease-out-soft) both;
