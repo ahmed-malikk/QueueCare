@@ -12,6 +12,11 @@ describe("UT-16 formatEstimate: the wait in words", () => {
     expect(formatEstimate({ patientsAhead: 2, low: 15, high: 25 })).toBe("About 15–25 min");
     expect(formatEstimate({ patientsAhead: 1, low: 5, high: 5 })).toBe("About 5 min");
   });
+
+  it("says Under N min when the range starts at 0, the same as the phone", () => {
+    expect(formatEstimate({ patientsAhead: 1, low: 0, high: 5 })).toBe("Under 5 min");
+    expect(formatEstimate({ patientsAhead: 2, low: 0, high: 10 })).toBe("Under 10 min");
+  });
 });
 
 describe("UT-16.1 formatRange: the wait on the patient's phone", () => {
@@ -19,5 +24,7 @@ describe("UT-16.1 formatRange: the wait on the patient's phone", () => {
     expect(formatRange({ low: 20, high: 30 })).toBe("20–30 min");
     expect(formatRange({ low: 10, high: 10 })).toBe("10 min");
     expect(formatRange({ low: 0, high: 0 })).toBe("Under 5 min");
+    expect(formatRange({ low: 0, high: 5 })).toBe("Under 5 min");
+    expect(formatRange({ low: 0, high: 10 })).toBe("Under 10 min");
   });
 });
