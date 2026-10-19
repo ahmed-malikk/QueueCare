@@ -166,9 +166,16 @@
   to { opacity: 1; translate: none; }
 }
 
+/* Errors and notices that appear after an action rise in with the same motion as the page. "backwards", like .page-enter,
+   so nothing is left on the element once it has finished. */
+[role="alert"] {
+  animation: page-enter 300ms var(--ease-out-soft) backwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .slip-print,
-  .page-enter { animation: none; }
+  .page-enter,
+  [role="alert"] { animation: none; }
 }
 
 /* "Print token" (PrintTokenButton): the slip is hidden on screen. While printing, only the slip
